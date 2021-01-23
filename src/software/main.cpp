@@ -1,7 +1,10 @@
-#include "Visualization/GLViewer.h"
+#include "visualization/GLViewer.h"
+#include "base/model.h"
+
 
 int main() {
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();
-    viewer.SetUp(800,600);
+    Model model;
+    viewer.SetUp(800, 600);
     viewer.Run();
 }

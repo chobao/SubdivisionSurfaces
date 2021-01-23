@@ -4,8 +4,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <memory>
+#include <functional>
 
 namespace GLRendering {
+
+	 
+
 	class Viewer {
 	public:
 		static Viewer& Instance() {
@@ -24,6 +28,7 @@ namespace GLRendering {
 		*
 		* @param[in] screen_width 
 		* @param[in] screen_height 
+		* @param[in] func 
 		*/
 		void SetUp(int screen_width, int screen_height);
 

@@ -96,19 +96,25 @@ namespace GLRendering {
 			CallBackController::KeyBoardCallBack(window);
 
 			const auto& camera = CallBackController::Instance().GetCamera();
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			gluPerspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
 
-			glMatrixMode(GL_MODELVIEW);
+			glMatrixMode(GL_PROJECTION); //project matrix
+			glLoadIdentity();
+			//gluPerspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
+			glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
+			glMultMatrixf(glm::value_ptr(projection));
+
+
+			
+			glMatrixMode(GL_MODELVIEW); //view matrix
 			glPushMatrix();
 			glLoadIdentity();
 
 			{
-				gluLookAt(camera.eye_x_, camera.eye_y_, camera.eye_z_, camera.eye_x_, camera.eye_y_, camera.eye_z_ - 1, 0, 1, 0);
-				//	turn table
-				glRotatef(camera.spin_y_, 1, 0, 0);
-				glRotatef(camera.spin_x_, 0, 1, 0);
+				// gluLookAt(camera.eye_x_, camera.eye_y_, camera.eye_z_, camera.eye_x_, camera.eye_y_, camera.eye_z_ - 1, 0, 1, 0);
+				// //	turn table
+				// glRotatef(camera.spin_y_, 1, 0, 0);
+				// glRotatef(camera.spin_x_, 0, 1, 0);
+				glMultMatrixf(glm::value_ptr(camera.ViewMatrix()));
 			}
 
 			//	draw function, we don't check whether draw and picking_draw match
@@ -119,26 +125,24 @@ namespace GLRendering {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//Display
-			//global coordinate
-			glBegin(GL_LINES);
-			glColor3f(1.0, 0.0, 0.0);
-			glVertex3f(0.0, 0.0, 0.0);
-			glVertex3d(1.0, 0.0, 0.0);
-
-			glColor3f(0.0, 1.0, 0.0);
-			glVertex3f(0.0, 0.0, 0.0);
-			glVertex3d(0.0, 1.0, 0.0);
-
-			glColor3f(0.0, 0.0, 1.0);
-			glVertex3f(0.0, 0.0, 0.0);
-			glVertex3d(0.0, 0.0, 1.0);
-			glEnd();
-
-
+			//global coordinate 
+			glBegin(GL_LINES); 
+			glColor3f(1.0, 0.0, 0.0); 
+			glVertex3f(0.0, 0.0, 0.0); 
+			glVertex3d(1.0, 0.0, 0.0); 
+ 
+			glColor3f(0.0, 1.0, 0.0); 
+			glVertex3f(0.0, 0.0, 0.0); 
+			glVertex3d(0.0, 1.0, 0.0); 
+ 
+			glColor3f(0.0, 0.0, 1.0); 
+			glVertex3f(0.0, 0.0, 0.0); 
+			glVertex3d(0.0, 0.0, 1.0); 
+			glEnd(); 
 
 			//	========================================================
 
-			glPopMatrix();
+			glPopMatrix(); // paired with glPushMatrix() above
 
 
 			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

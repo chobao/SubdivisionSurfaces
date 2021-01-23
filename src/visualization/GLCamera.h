@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
+#include "utils/common_utils.h"
 
 namespace GLRendering {
 
@@ -51,6 +52,16 @@ namespace GLRendering {
 		void UpdateOldMousePos(float x, float y) {
 			old_x_ = x;
 			old_y_ = y;
+		}
+
+		glm::mat4 ViewMatrix() const{
+			glm::mat4 view_matrix = glm::lookAt(glm::vec3(eye_x_, eye_y_, eye_z_), glm::vec3(eye_x_, eye_y_, eye_z_ - 1), glm::vec3(0, 1, 0));
+			view_matrix = glm::rotate(view_matrix, static_cast<float>(spin_y_ * M_PI / 180.0), glm::vec3(1,0,0));
+			view_matrix = glm::rotate(view_matrix, static_cast<float>(spin_x_ * M_PI / 180.0), glm::vec3(0,1,0));
+			return view_matrix;
+			// 	turn table
+			// // glRotatef(spin_y_, 1, 0, 0);
+			// // glRotatef(spin_x_, 0, 1, 0);
 		}
 
 

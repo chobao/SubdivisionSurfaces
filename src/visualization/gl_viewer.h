@@ -1,14 +1,21 @@
 #pragma once
-#include "GLCamera.h"
+#include "gl_camera.h"
+#include "gl_geometry.h"
+#include "gl_shader.h"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <memory>
+#include <map>
 #include <functional>
 
 namespace GLRendering {
 
-	 
+	struct ModelAttrib{
+			std::shared_ptr<Geometry> model;
+			glm::mat4 modelMatrix;
+			GLenum renderingMode;
+	};
 
 	class Viewer {
 	public:
@@ -22,27 +29,58 @@ namespace GLRendering {
 		~Viewer() {}
 		Viewer();
 
+		
 
 		/**
 		* @brief Set up the OpenGL Window for Display
 		*
 		* @param[in] screen_width 
 		* @param[in] screen_height 
-		* @param[in] func 
 		*/
-		void SetUp(int screen_width, int screen_height);
+		bool SetUp(int screen_width, int screen_height, 
+					   const std::string& vertex_shader_path, const std::string& fragment_shader_path);
 
 		/**
-		* @brief Main Loop of OpenGL Rendering
+		* @brief Main Loop of OpenGL Rendering in a fixed pipeline
 		*
+		* @param None
+		*/
+		void RunFixed();
+
+		/**
+		* @brief Main Loop of OpenGL Rendering in a modern pipeline
+		*
+		* @param None
 		*/
 		void Run();
 
-	private:
+
+
+		void Render();
+
+		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex,
+										const glm::mat4& modelMatrix);
 		
+		
+
+
+
+	private:
+		static std::shared_ptr<Geometry> CreateGeometryPNC(const float* pData, const int stride,
+                                  const int num_vertex,
+                                  unsigned int* indices, const int num_indices); //analogous to SimpleApp::CreateFromObjFile
+		static bool InitializeShader(Shader &whichShader, const char *vertexPath, const char *fragmentPath,
+                     				 const char *vertexName, const char *fragmentName);
+
+		bool InitializeContext();
 		int screen_width_, screen_height_;
 		bool b_setup_;
 		bool firstMouse_;
+		std::string vertex_shader_path_, fragment_shader_path_;
+		std::map<int, ModelAttrib> models_;
+		Shader shader_;
+		GLFWwindow* window_;
+		
 	};
 
 	class CallBackController {

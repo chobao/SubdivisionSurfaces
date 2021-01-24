@@ -44,6 +44,8 @@ public:
             }
         }
     }
+    
+    std::shared_ptr<std::vector<float>> ConvertToTriangularMesh();
 
 
 private:

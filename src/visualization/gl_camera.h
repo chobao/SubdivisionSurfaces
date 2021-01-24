@@ -25,6 +25,7 @@ namespace GLRendering {
 			eye_x_(eye_x_), eye_y_(eye_y), eye_z_(eye_z){
 			spin_x_ = 0.0f, spin_y_ = 0.0f;
 			zoom_ = ZOOM;
+			sensitivity_ = 1000;
 		}
 
 		void ProcessMouseScroll(float yoffset) {
@@ -41,11 +42,11 @@ namespace GLRendering {
 				spin_y_ += float(y - old_y_);
 			}
 			else if (press == MIDDLE_BUTTON) {
-				eye_x_ -= float(x - old_x_) / 30;
-				eye_y_ += float(y - old_y_) / 30;
+				eye_x_ -= float(x - old_x_) / (3 * sensitivity_);
+				eye_y_ += float(y - old_y_) / (3 * sensitivity_);
 			}
 			else if (press == RIGHT_BUTTON) {
-				eye_z_ += float(y - old_y_) / 10;
+				eye_z_ += float(y - old_y_) / (sensitivity_);
 			}
 		}
 
@@ -69,5 +70,6 @@ namespace GLRendering {
 		float spin_x_, spin_y_;
 		float old_x_, old_y_;
 		float zoom_;
+		float sensitivity_;
 	};
 }

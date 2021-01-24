@@ -182,16 +182,16 @@ void Model::TransformationOntoScreen(uint width, uint height, Eigen::Vector3d& s
 
 }
 
-// std::shared_ptr<std::vector<float>> Model::ConvertToTriangularMesh() {
-//     std::shared_ptr<std::vector<float>> triangular_mesh;
+std::shared_ptr<std::vector<float>> Model::ConvertToTriangularMesh() {
+    std::shared_ptr<std::vector<float>> triangular_mesh;
     
-//     //collect data size
-//     for(int i = 0 ; i < planes_.size() ; i++) {
+    //collect data size
+    for(int i = 0 ; i < planes_.size() ; i++) {
         
-//     }
+    }
 
-//     //reserve vector size
+    //reserve vector size
 
-//     //push vertex and color data by order `p1 p2 p3 r g b`
+    //push vertex and color data by order `p1 p2 p3 r g b`
 
-// }
+}

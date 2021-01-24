@@ -255,7 +255,7 @@ namespace GLRendering {
 		const auto& camera = CallBackController::Instance().GetCamera();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 100.0f);
 		glm::mat4 view_matrix = camera.ViewMatrix();
-		Output("view_matrix", view_matrix);
+		//Output("view_matrix", view_matrix);
 
 
 		shader_.Bind();

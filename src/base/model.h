@@ -40,12 +40,12 @@ public:
             //planes_.Print();
             std::cout<<"Plane "<<i<<"\n";
             for(int j = 0 ; j < planes_[i].NumPoints() ; j++) {
-                std::cout<<"p("<<j<<"): "<<std::fixed<<std::setprecision(9) <<planes_[i].Point(j).transpose()<<"\n";
+                std::cout<<"p("<<j<<"): "<<std::fixed<<std::setprecision(9) <<planes_[i].PointElement(j).transpose()<<"\n";
             }
         }
     }
     
-    std::shared_ptr<std::vector<float>> ConvertToTriangularMesh();
+    std::tuple<std::shared_ptr<std::vector<float>>, size_t> ConvertToTriangularMesh();
 
 
 private:

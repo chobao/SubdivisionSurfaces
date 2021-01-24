@@ -110,7 +110,7 @@ void Model::SetShaderColor(const int width, const int height) {
         const Eigen::Vector3d& normal = planes_[i].Norm();
         int num_points = planes_[i].NumPoints();
         for (int j = 0; j < num_points ; j++) {
-            Eigen::Vector3d vertex = planes_[i].Point(j);
+            Eigen::Vector3d vertex = planes_[i].PointElement(j);
             Eigen::Vector3d ray_direction = (light_position - vertex).normalized();
             float cosine = std::abs(ray_direction.dot(normal));
             color += cosine * light_color;
@@ -172,7 +172,7 @@ void Model::TransformationOntoScreen(uint width, uint height, Eigen::Vector3d& s
     for(size_t i = 0 ; i < planes_.size() ; i++) {
         std::vector<Eigen::Vector3d> new_vertexes(planes_[i].NumPoints());
         for(int j = 0 ; j < planes_[i].NumPoints() ; j++) {
-            new_vertexes[j] = (planes_[i].Point(j) - model_center) * scale + translation_3d;  //scale
+            new_vertexes[j] = (planes_[i].PointElement(j) - model_center) * scale + translation_3d;  //scale
             new_vertexes[j](1) = height - new_vertexes[j](1); //flip the model
         }
         planes_[i] = Plane(new_vertexes);
@@ -182,16 +182,58 @@ void Model::TransformationOntoScreen(uint width, uint height, Eigen::Vector3d& s
 
 }
 
-std::shared_ptr<std::vector<float>> Model::ConvertToTriangularMesh() {
-    std::shared_ptr<std::vector<float>> triangular_mesh;
+std::tuple<std::shared_ptr<std::vector<float>>, size_t> Model::ConvertToTriangularMesh() {
+    
+    std::shared_ptr<std::vector<float>> triangular_mesh = std::make_shared<std::vector<float>>();
     
     //collect data size
+    size_t num_mesh = 0;
     for(int i = 0 ; i < planes_.size() ; i++) {
-        
+        const size_t num_points = planes_[i].NumPoints();
+        if(num_points < 2) {
+            continue;
+        }
+        num_mesh += num_points - 2;
+    }
+    //reserve vector size
+    triangular_mesh->reserve(num_mesh);
+
+    //push vertex and color data by order `p(0) p(1) p(1) n(0) n(1) n(2) r g b`
+    auto func = [&](const Eigen::Vector3d& p, const Eigen::Vector3d& norm, const Color& color){
+        for(int k = 0 ; k < 3 ; k++) {
+            triangular_mesh->emplace_back(p(k));
+        }
+        for(int k = 0 ; k < 3 ; k++) {
+            triangular_mesh->emplace_back(norm(k));
+        }
+        triangular_mesh->emplace_back(color.r /255.0f);
+        triangular_mesh->emplace_back(color.g /255.0f);
+        triangular_mesh->emplace_back(color.b /255.0f);
+
+    };
+
+    
+    for(int i = 0 ; i < planes_.size() ; i++) {
+        if(planes_[i].NumPoints() < 2) {
+            continue;
+        }
+        const auto& points = planes_[i].Points();
+        const Eigen::Vector3d& norm = planes_[i].Norm();
+        const Color& color = colors_[i];
+
+        const Eigen::Vector3d& p1 = points[0];
+        for(int j = 1 ,sz = points.size() - 1; j < sz ;j++) {
+            //push vertex
+            func(p1, norm, color);
+            func(points[j], norm, color);
+            func(points[j + 1], norm, color);
+        }
     }
 
-    //reserve vector size
+    return {triangular_mesh, num_mesh * 3};
 
-    //push vertex and color data by order `p1 p2 p3 r g b`
+    
+
+    
 
 }

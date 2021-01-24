@@ -223,7 +223,7 @@ namespace GeometryUtils
 
         inline const std::vector<Eigen::Vector3d>& Points() const { return points_;}
         inline  size_t NumPoints() const { return points_.size();}
-        inline const Eigen::Vector3d& Point(size_t i) const { return points_[i];}
+        inline const Eigen::Vector3d& PointElement(size_t i) const { return points_[i];}
 
         inline const Eigen::Vector3d& Norm() const { return norm_;}
 

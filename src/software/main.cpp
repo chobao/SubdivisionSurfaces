@@ -3,6 +3,7 @@
 #include "utils/config.h"
 #include "utils/io_utils.h"
 #include "subdivision/mesh.h"
+#include "subdivision/catmull_solver.h"
 
 
 int testRendering() {
@@ -83,18 +84,28 @@ int testModel( const CommonUtils::Config& config){
 int solve( const CommonUtils::Config& config) {
     const std::string file_path;
     const int scr_width = config.view_width, scr_height = config.view_height;
+    const size_t num_levels = 2;
 
     std::vector<Eigen::Vector3d> vertices;
     std::vector<std::vector<index_t>> polygons;
     CommonUtils::LoadObj(config.model_path, vertices, polygons);
-    SubDivision::Mesh mesh1;
-    mesh1.SetUp(vertices, polygons);
-    mesh1.PrintObj();
-    mesh1.PrintPolygon();
+    std::vector<std::shared_ptr<SubDivision::Mesh>> meshes;
+    meshes.reserve(num_levels);
+    meshes.emplace_back(std::make_shared<SubDivision::Mesh>());
+    meshes[0]->SetUp(vertices, polygons);
+    meshes[0]->PrintObj();
+    meshes[0]->PrintPolygon();
+
+    // SubDivision::CatmullClarkSolver clark_division_solver;
+    // for(int i = 1 ; i < num_levels ; i++) {
+    //     auto updated_mesh = std::make_shared<SubDivision::Mesh>();
+    //     clark_division_solver.Run((*meshes[i-1]), (*updated_mesh));
+    //     meshes.emplace_back(updated_mesh);
+    // }
 
     std::shared_ptr<std::vector<float>> pData;
     size_t num_vertex;
-    std::tie(pData, num_vertex) = mesh1.ConvertToTriangularMesh();
+    std::tie(pData, num_vertex) = meshes[0]->ConvertToTriangularMesh();
     
 
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();

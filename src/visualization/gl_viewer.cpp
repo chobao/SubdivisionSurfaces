@@ -109,7 +109,7 @@ namespace GLRendering {
 			//// --------------------
 			float currentframe = glfwGetTime();
 
-			CallBackController::KeyBoardCallBack(window_);
+			KeyBoardCallBack();
 
 			
 			// ------
@@ -321,6 +321,21 @@ namespace GLRendering {
     	return new_model;
 	}
 
+	/**
+	* @brief Implementation of keyboard clicking callback function
+	*
+	* @param[in] window_
+	*/
+	void Viewer::KeyBoardCallBack()
+	{
+		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+			glfwSetWindowShouldClose(window_, true);
+
+		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
+			b_show_wireframe_ = !b_show_wireframe_;
+			
+	}
+
 	/////////////////////////////////////////////////
 	//CallBackController Member Function Definition
 	/////////////////////////////////////////////////
@@ -378,16 +393,7 @@ namespace GLRendering {
 		camera->UpdateOldMousePos(x, y);
 		//glutPostRedisplay();
 	}
-	/**
-	* @brief Implementation of keyboard clicking callback function
-	*
-	* @param[in] window_
-	*/
-	void CallBackController::KeyBoardCallBackImpl(GLFWwindow *window_)
-	{
-		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			glfwSetWindowShouldClose(window_, true);
-			
-	}
+	
+	
 
 }

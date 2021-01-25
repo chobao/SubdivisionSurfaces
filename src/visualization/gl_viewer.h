@@ -75,6 +75,13 @@ namespace GLRendering {
 		static bool InitializeShader(Shader &whichShader, const char *vertexPath, const char *fragmentPath,
                      				 const char *vertexName, const char *fragmentName);
 
+		/**
+		* @brief Implementation of keyboard clicking callback function
+		*
+		* @param[in] window
+		*/
+		void KeyBoardCallBack();
+
 		bool InitializeContext();
 		int screen_width_, screen_height_;
 		bool b_setup_;
@@ -138,14 +145,6 @@ namespace GLRendering {
 		static void MouseMotionCallback(GLFWwindow* window, double x, double y) {
 			CallBackController::Instance().MouseMotionCallbackImpl(window, x, y);
 		}
-		/**
-		* @brief Keyboard clicking callback function
-		*
-		* @param[in] window
-		*/
-		static void KeyBoardCallBack(GLFWwindow *window){
-			CallBackController::Instance().KeyBoardCallBackImpl(window);
-		}
 		
 		///////////////////////////////////////////
 		// OpenGL CallBack Implementation
@@ -166,12 +165,7 @@ namespace GLRendering {
 		* @param[in] y
 		*/
 		void MouseMotionCallbackImpl(GLFWwindow* window, double x, double y);
-		/**
-		* @brief Implementation of keyboard clicking callback function
-		*
-		* @param[in] window
-		*/
-		void KeyBoardCallBackImpl(GLFWwindow *window);
+		
 
 		
 

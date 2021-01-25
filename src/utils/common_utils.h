@@ -15,6 +15,7 @@
 
 namespace CommonUtils {
     typedef unsigned int uint;
+    typedef int index_t;
     
     //(Note): `(b-a)` should be less than 32767(MAX_RAND),
     //       otherwise, the function only produces the number within `a` and `a+32767`
@@ -54,32 +55,7 @@ namespace CommonUtils {
         //std::chrono::high_resolution_clock::time_point
     };
 
-    //Read content from file path and return pointer of the buffer
-    //pFileName: the pointer of the file path string
-    //pBufferSize: will write the the length of the content into it
-    //return a pointer of the buffer which have the file content
-    inline void *GetFileBuffer(const char *pFileName, int *pBufferSize)
-    {
-
-        printf("Opening File: %s\n", pFileName);
-        FILE *fp = fopen(pFileName, "rb");
-        if (!fp) {
-            printf("Unable to open file: %s\n", pFileName);
-            return NULL;
-        }
-
-        fseek(fp, 0, SEEK_END);
-        *pBufferSize = ftell(fp);
-        fseek(fp, 0, SEEK_SET);
-
-        char *pRetBuff = new char[*pBufferSize + 1];
-        size_t tmp = fread(pRetBuff, 1, *pBufferSize, fp);
-        pRetBuff[*pBufferSize] = 0;
-
-        fclose(fp);
-
-        return pRetBuff;
-    }
+    
 
    
 }

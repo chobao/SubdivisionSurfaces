@@ -232,8 +232,4 @@ std::tuple<std::shared_ptr<std::vector<float>>, size_t> Model::ConvertToTriangul
 
     return {triangular_mesh, num_mesh * 3};
 
-    
-
-    
-
 }

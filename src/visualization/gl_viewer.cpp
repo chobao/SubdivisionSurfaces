@@ -4,7 +4,7 @@
 //#include <glut/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "utils/common_utils.h"
+#include "utils/io_utils.h"
 
 namespace GLRendering {
 

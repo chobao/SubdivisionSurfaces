@@ -52,7 +52,7 @@ int testRendering() {
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f, 0.7f, 0.6f, 0.6f
     };
     viewer.SetUp(800, 600, "../../src/visualization/model_v.glsl", "../../src/visualization/model_f.glsl");
-    viewer.CreateMeshPNC(vertices, 9, 36, glm::mat4(1.0));
+    viewer.CreateMeshPNC(vertices, 9, 36, glm::vec3(0.4, 0.4, 0.0), glm::mat4(1.0));
     viewer.Run();
     return 0;
 }
@@ -78,7 +78,7 @@ int solve(){
     std::tie(vertices, num_vertex) = model.ConvertToTriangularMesh();
     
     viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path);
-    viewer.CreateMeshPNC(vertices->data(), 9, num_vertex, glm::mat4(1.0));
+    viewer.CreateMeshPNC(vertices->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
     viewer.Run();
     return 0;
 }

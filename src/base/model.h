@@ -40,6 +40,7 @@ public:
             //planes_.Print();
             std::cout<<"Plane "<<i<<"\n";
             for(int j = 0 ; j < planes_[i].NumPoints() ; j++) {
+
                 std::cout<<"p("<<j<<"): "<<std::fixed<<std::setprecision(9) <<planes_[i].PointElement(j).transpose()<<"\n";
             }
         }

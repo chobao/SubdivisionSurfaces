@@ -13,7 +13,9 @@ namespace GLRendering {
 
 	struct ModelAttrib{
 			std::shared_ptr<Geometry> model;
+			std::shared_ptr<std::vector<float>> data;
 			glm::mat4 modelMatrix;
+			glm::vec3 modelColor;
 			GLenum renderingMode;
 	};
 
@@ -54,11 +56,12 @@ namespace GLRendering {
 		*/
 		void Run();
 
+		void RenderFixed();
 
 
 		void Render();
 
-		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex,
+		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix);
 		
 		
@@ -77,7 +80,9 @@ namespace GLRendering {
 		bool b_setup_;
 		bool firstMouse_;
 		std::string vertex_shader_path_, fragment_shader_path_;
+		glm::vec3 light_pos_;
 		std::map<int, ModelAttrib> models_;
+		bool b_show_wireframe_;
 		Shader shader_;
 		GLFWwindow* window_;
 		
@@ -171,7 +176,7 @@ namespace GLRendering {
 		
 
 	private:
-		std::shared_ptr<TurnTableCamera> camera;
+		std::shared_ptr<TurnTableCamera> camera;		
 
 	};
 }

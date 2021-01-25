@@ -26,9 +26,9 @@ namespace GLRendering {
 		screen_height_ =screen_height;
 		firstMouse_ = true;
 		vertex_shader_path_ = vertex_shader_path, fragment_shader_path_ = fragment_shader_path;
-
+		b_show_wireframe_ = false;
 		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
-
+		light_pos_ = glm::vec3(screen_width / 2.0, screen_height / 2.0, 1000.0f);
 		if(InitializeContext()) {
 			b_setup_ = true;
 		}
@@ -68,7 +68,7 @@ namespace GLRendering {
 		//glfwSetMouseButtonCallback(window_, DefaultMotionFunc);
 
 		// tell GLFW to capture our mouse
-		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		//glfwSetInputMode(window_, GLFW_STICKY_KEYS, GL_TRUE);
 		// glad: load all OpenGL function pointers
 		// ---------------------------------------
@@ -86,92 +86,6 @@ namespace GLRendering {
 		glEnable(GL_DEPTH_TEST);
 		return true;
 
-	}
-	/**
-	* @brief Main Loop of OpenGL Rendering in a fixed pipeline
-	*
-	* @param None
-	*/
-	void Viewer::RunFixed() {
-
-		if (!b_setup_) {
-			std::cerr << "Error: Please first invoke SetUp() function.\n";
-			return;
-		}
-
-		float w = 0.1f;
-		float h = w * 0.5f;
-		float z = w * 0.6f;
-
-		// -----------------------------
-
-
-		while (!glfwWindowShouldClose(window_))
-		{
-			//// per-frame time logic
-			//// --------------------
-			float currentframe = glfwGetTime();
-
-			CallBackController::KeyBoardCallBack(window_);
-
-			const auto& camera = CallBackController::Instance().GetCamera();
-
-			glMatrixMode(GL_PROJECTION); //project matrix
-			glLoadIdentity();
-			//gluPerspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
-			glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
-			glMultMatrixf(glm::value_ptr(projection));
-
-
-			
-			glMatrixMode(GL_MODELVIEW); //view matrix
-			glPushMatrix();
-			glLoadIdentity();
-
-			{
-				// gluLookAt(camera.eye_x_, camera.eye_y_, camera.eye_z_, camera.eye_x_, camera.eye_y_, camera.eye_z_ - 1, 0, 1, 0);
-				// //	turn table
-				// glRotatef(camera.spin_y_, 1, 0, 0);
-				// glRotatef(camera.spin_x_, 0, 1, 0);
-				glMultMatrixf(glm::value_ptr(camera.ViewMatrix()));
-			}
-
-			
-			// ------
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			// //Display
-				// //global coordinate 
-				// glBegin(GL_LINES); 
-				// glColor3f(1.0, 0.0, 0.0); 
-				// glVertex3f(0.0, 0.0, 0.0); 
-				// glVertex3d(1.0, 0.0, 0.0); 
-
-				// glColor3f(0.0, 1.0, 0.0); 
-				// glVertex3f(0.0, 0.0, 0.0); 
-				// glVertex3d(0.0, 1.0, 0.0); 
-
-				// glColor3f(0.0, 0.0, 1.0); 
-				// glVertex3f(0.0, 0.0, 0.0); 
-				// glVertex3d(0.0, 0.0, 1.0); 
-				// glEnd(); 
-			// render
-
-			//	========================================================
-
-			glPopMatrix(); // paired with glPushMatrix() above
-
-
-			// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-			// -------------------------------------------------------------------------------
-			glfwSwapBuffers(window_);
-			glfwPollEvents();
-		}
-		// glfw: terminate, clearing all previously allocated GLFW resources.
-		// ------------------------------------------------------------------
-		glfwTerminate();
-		return;
 	}
 
 	/**
@@ -203,7 +117,11 @@ namespace GLRendering {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//	========================================================
-			Render();
+			if(b_show_wireframe_) {
+				RenderFixed();
+			} else {
+				Render();
+			}
 			//  ========================================================
 
 
@@ -251,20 +169,70 @@ namespace GLRendering {
 		return succ;
     }
 
+	void Viewer::RenderFixed() {
+		const auto& camera = CallBackController::Instance().GetCamera();
+
+		glMatrixMode(GL_PROJECTION); //project matrix
+		glLoadIdentity();
+		//gluPerspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
+		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
+		glMultMatrixf(glm::value_ptr(projection));
+
+
+		
+		glMatrixMode(GL_MODELVIEW); //view matrix
+		glPushMatrix();
+		glLoadIdentity();
+		glMultMatrixf(glm::value_ptr(camera.ViewMatrix()));
+		glBegin(GL_LINES);
+		
+		for(auto& modelItem: models_) {
+			glColor3f(modelItem.second.modelColor.x, modelItem.second.modelColor.y, modelItem.second.modelColor.z); 
+			std::shared_ptr<std::vector<float>> data = modelItem.second.data;
+			for(int j = 0 ; j < data->size() ; j+=3) {
+				glVertex3f(data->at(j), data->at(j+1), data->at(j+2));
+			}
+		}
+		glEnd();
+		glPopMatrix();
+
+	}
+
 	void Viewer::Render(){
 		const auto& camera = CallBackController::Instance().GetCamera();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 100.0f);
-		glm::mat4 view_matrix = camera.ViewMatrix();
+		//glm::mat4 view_matrix = camera.ViewMatrix(); //occasion 2
+		glm::mat4 view_matrix = glm::mat4(1.0); //occasion 1
+		glm::mat4 model_matrix = camera.ViewMatrix();
+		//Comment(BCHO): camera.ViewMatrix() transform model from world to camera frame
+		//				which denotes how we move model to camera frame
+		//				If we use it as view matrix , camera moves in the scene
+		//				but model is still that the normal of model is same all the time.
+		//				So we will see the back(unlighted) of model opposite to the light
+		//				But it is incompatible to our target that camera and light is still 
+		//				and user always sees the lighted side of model. In the target,
+		//				we should use the camera.ViewMatrix() as model matrix to modify 
+		//				the normal of model all the time.
+		//glm::vec3 eye_pos = camera.EyePos();
+		glm::vec3 eye_pos = glm::vec3(-view_matrix[3][0], -view_matrix[3][1],
+                                 -view_matrix[3][2]);  //?
 		//Output("view_matrix", view_matrix);
 
 
 		shader_.Bind();
 		shader_.SetUniformMat4("projectionMatrix", projection);
 		shader_.SetUniformMat4("viewMatrix", view_matrix);
+		shader_.SetUniformVec3("eyePos", eye_pos);
+		shader_.SetUniformVec3("lightPos", light_pos_);
+
 
 		{
 			for(auto& modelItem: models_) {
-				shader_.SetUniformMat4("modelMatrix",modelItem.second.modelMatrix);
+				shader_.SetUniformMat4("modelMatrix",model_matrix); //occasion 1
+				//shader_.SetUniformMat4("modelMatrix",modelItem.second.modelMatrix); //occasion 2
+
+				shader_.SetUniformVec3("modelColor",modelItem.second.modelColor);
+
 				modelItem.second.model->Submit(modelItem.second.renderingMode);
 			}
 		}
@@ -273,10 +241,11 @@ namespace GLRendering {
 	}
 	
 
-	ModelAttrib* Viewer::CreateMeshPNC(const float* pData, const int stride, const int num_vertex,
+	ModelAttrib* Viewer::CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix) {  
 		
 		
+
 		const int num_indices = num_vertex;
 		unsigned int* indices = new unsigned int[num_indices];
 		for(int i = 0 ; i < num_indices ; i++) {
@@ -286,7 +255,19 @@ namespace GLRendering {
 		const int idx = models_.size();
 		models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
 		models_[idx].modelMatrix = modelMatrix;
+		models_[idx].modelColor = modelColor;
 		models_[idx].renderingMode = GL_TRIANGLES;
+
+
+		//preserve data for drawing wireframe
+		models_[idx].data = std::make_shared<std::vector<float>>();
+		models_[idx].data->reserve(3 * num_vertex);
+		for(int i = 0 ; i < num_vertex ; i++) {
+			models_[idx].data->emplace_back(pData[i * stride]);
+			models_[idx].data->emplace_back(pData[i * stride + 1]);
+			models_[idx].data->emplace_back(pData[i * stride + 2]);
+		}
+
 		return &(models_[idx]);
 		
 	}

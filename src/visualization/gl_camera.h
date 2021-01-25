@@ -46,7 +46,7 @@ namespace GLRendering {
 				eye_y_ += float(y - old_y_) / (3 * sensitivity_);
 			}
 			else if (press == RIGHT_BUTTON) {
-				eye_z_ += float(y - old_y_) / (sensitivity_);
+				eye_z_ += float(y - old_y_) / (0.1 * sensitivity_);
 			}
 		}
 
@@ -63,6 +63,10 @@ namespace GLRendering {
 			// 	turn table
 			// // glRotatef(spin_y_, 1, 0, 0);
 			// // glRotatef(spin_x_, 0, 1, 0);
+		}
+
+		glm::vec3 EyePos() const {
+			return glm::vec3(eye_x_, eye_y_, eye_z_);
 		}
 
 

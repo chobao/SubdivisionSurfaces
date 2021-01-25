@@ -91,7 +91,8 @@ int solve( const CommonUtils::Config& config) {
     CommonUtils::LoadObj(config.model_path, vertices, polygons);
     std::vector<std::shared_ptr<SubDivision::Mesh>> meshes;
     meshes.reserve(num_levels);
-    meshes.emplace_back(std::make_shared<SubDivision::Mesh>());
+    auto mesh0 = std::make_shared<SubDivision::Mesh>();
+    meshes.emplace_back(mesh0);
     meshes[0]->SetUp(vertices, polygons);
     meshes[0]->PrintObj();
     meshes[0]->PrintPolygon();
@@ -106,19 +107,21 @@ int solve( const CommonUtils::Config& config) {
     std::shared_ptr<std::vector<float>> pData;
     size_t num_vertex;
     std::tie(pData, num_vertex) = meshes[0]->ConvertToTriangularMesh();
-    
+    std::cout<<"pData->size(): "<<pData->size()<<"\n";
 
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();
-    viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path);
-    viewer.CreateMeshPNC(pData->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
-    viewer.Run();
+    if(viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path)) {
+        viewer.CreateMeshPNC(pData->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
+        viewer.Run();
+    }
+    
 }
 
 int main(){
      CommonUtils::Config config;
     config.view_width = 800, config.view_height = 600;
     config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/teapot.obj";
-    config.vertex_shader_path = "../../src/visualization/model_v.glsl";
-    config.fragment_shader_path = "../../src/visualization/model_f.glsl";
+    config.vertex_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_v.glsl";
+    config.fragment_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_f.glsl";
     solve(config);
 }

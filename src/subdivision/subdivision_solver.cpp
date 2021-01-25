@@ -6,7 +6,7 @@ namespace SubDivision {
                 const std::vector<std::shared_ptr<Edge>>& edges = mesh.Edges();
                 std::vector<index_t> edge_points(edges.size());
 
-                for(int i = 0 ; i < edge_points.size() ; i++) {
+                for(int i = 0 ; i < edges.size() ; i++) {
                     const Eigen::Vector3d& p1 = mesh.VertexPoint(edges[i]->id1);
                     const Eigen::Vector3d& p2 = mesh.VertexPoint(edges[i]->id2);
                     Eigen::Vector3d mid_point = (p1 + p2) / 2.0;

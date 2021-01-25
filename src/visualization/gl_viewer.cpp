@@ -26,7 +26,7 @@ namespace GLRendering {
 		screen_height_ =screen_height;
 		firstMouse_ = true;
 		vertex_shader_path_ = vertex_shader_path, fragment_shader_path_ = fragment_shader_path;
-		b_show_wireframe_ = false;
+		b_show_wireframe_ = true;
 		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
 		light_pos_ = glm::vec3(screen_width / 2.0, screen_height / 2.0, 1000.0f);
 		if(InitializeContext()) {
@@ -55,7 +55,7 @@ namespace GLRendering {
 		window_ = glfwCreateWindow(screen_width_, screen_height_, "MyOpenGL", NULL, NULL);
 		if (window_ == NULL)
 		{
-			std::cout << "Failed to create GLFW window_" << std::endl;
+			std::cerr << "Failed to create GLFW window_" << std::endl;
 			glfwTerminate();
 			return false;
 		}
@@ -75,11 +75,12 @@ namespace GLRendering {
 
 		if (glewInit() != GLEW_OK)
 		{
-			std::cout << "Failed to initialize GLEW" << std::endl;
+			std::cerr << "Failed to initialize GLEW" << std::endl;
 			return false;
 		}
 
     	if(!InitializeShader(shader_, vertex_shader_path_.c_str(), fragment_shader_path_.c_str(), "Vs", "Fs")) {
+			std::cerr << "Failed to initialize shader " << std::endl;
 			return false;
 		}
 
@@ -244,7 +245,16 @@ namespace GLRendering {
 	ModelAttrib* Viewer::CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix) {  
 		
-		
+		if(verbose) {
+			for(int i = 0 ; i < num_vertex ; i++) {
+				int index = i * stride;
+				std::cout<<"("<<i<<") ";
+				for(int j = 0 ; j < 9 ;j++) {
+					std::cout<<pData[index + j]<<" ";
+				}
+				std::cout<<"\n";
+			}
+		}
 
 		const int num_indices = num_vertex;
 		unsigned int* indices = new unsigned int[num_indices];
@@ -253,7 +263,7 @@ namespace GLRendering {
 		}
 
 		const int idx = models_.size();
-		models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
+		//models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
 		models_[idx].modelMatrix = modelMatrix;
 		models_[idx].modelColor = modelColor;
 		models_[idx].renderingMode = GL_TRIANGLES;
@@ -266,6 +276,16 @@ namespace GLRendering {
 			models_[idx].data->emplace_back(pData[i * stride]);
 			models_[idx].data->emplace_back(pData[i * stride + 1]);
 			models_[idx].data->emplace_back(pData[i * stride + 2]);
+		}
+
+		if(verbose) {
+			for(int i = 0 ; i < models_[idx].data->size() ; i+=3) {
+				std::cout<<"("<< i / 3<<") ";
+				std::cout<<models_[idx].data->at(i)<<" ";
+				std::cout<<models_[idx].data->at(i + 1)<<" ";
+				std::cout<<models_[idx].data->at(i + 2)<<" ";
+				std::cout<<"\n";
+			}
 		}
 
 		return &(models_[idx]);

@@ -118,7 +118,7 @@ namespace SubDivision {
             num_mesh += num_points - 2;
         }
         //reserve vector size
-        triangular_mesh->reserve(num_mesh);
+        triangular_mesh->reserve(num_mesh * 27);
 
         //push vertex and color data by order `p(0) p(1) p(1) n(0) n(1) n(2) r g b`
         auto func = [&](const Eigen::Vector3d& p, const Eigen::Vector3d& norm){
@@ -134,7 +134,7 @@ namespace SubDivision {
 
         };
 
-        
+        size_t num_vertex = 0;
         for(int i = 0 ; i < polygons_.size() ; i++) {
             if(polygons_[i]->NumPoints() < 2) {
                 continue;
@@ -148,10 +148,11 @@ namespace SubDivision {
                 func(p1, norm);
                 func(VertexPoint(points[j]), norm);
                 func(VertexPoint(points[j + 1]), norm);
+                num_vertex += 3;
             }
         }
 
-        return {triangular_mesh, num_mesh * 3};
+        return {triangular_mesh, num_vertex};
 
     }
 

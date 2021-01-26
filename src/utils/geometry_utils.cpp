@@ -141,6 +141,15 @@ namespace GeometryUtils {
             return center;
     }
 
+    Eigen::Vector3d GetCentroidInConvexPointSet(const std::vector<Eigen::Vector3d>& points) {
+            Eigen::Vector3d center(0.0, 0.0, 0.0);
+            for (const auto& p : points) {
+                center += p;
+            }
+            center /= points.size();
+            return center;
+    }
+
     void SortConvexPointSetInClockWise(std::vector<Eigen::Vector2d>& points) {
         Eigen::Vector2d center = GetCentroidInConvexPointSet(points);
         auto cmp = [&] (const Eigen::Vector2d& p1, const Eigen::Vector2d& p2){
@@ -151,5 +160,22 @@ namespace GeometryUtils {
 
         std::sort(points.begin(), points.end(), cmp);
         
+    }
+
+    void SortConvexPointIndexSetInClockWise(const std::vector<Eigen::Vector3d>& vertices, const Eigen::Vector3d& norm, std::vector<CommonUtils::index_t>& indexes) {
+            std::vector<Eigen::Vector3d> points(indexes.size());
+            for(int i = 0 ; i < indexes.size() ; i++) {
+                points[i] = vertices[indexes[i]];
+            }
+            Eigen::Vector3d center = GetCentroidInConvexPointSet(points);
+            
+            auto cmp = [&] (const CommonUtils::index_t& p1, const CommonUtils::index_t& p2){
+                Eigen::Vector3d n1 = vertices[p1] - center;
+                Eigen::Vector3d n2 = vertices[p2] - center;
+                return norm.dot(n1.cross(n2)) > 0;
+
+            };
+            std::sort(indexes.begin(), indexes.end(), cmp);
+            
     }
 }

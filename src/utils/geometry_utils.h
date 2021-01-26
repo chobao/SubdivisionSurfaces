@@ -15,7 +15,7 @@
 #include <tuple>
 #include <iostream>
 //#define TRIANGULAR
-
+#include "common_utils.h"
 
 
 
@@ -246,7 +246,9 @@ namespace GeometryUtils
     }
 
     void SortConvexPointSetInClockWise(std::vector<Eigen::Vector2d>& points);
+    void SortConvexPointIndexSetInClockWise(const std::vector<Eigen::Vector3d>& vertices, const Eigen::Vector3d& norm, std::vector<CommonUtils::index_t>& indexes);
     Eigen::Vector2d GetCentroidInConvexPointSet(const std::vector<Eigen::Vector2d>& points);
+    Eigen::Vector3d GetCentroidInConvexPointSet(const std::vector<Eigen::Vector3d>& points);
 
     
 }

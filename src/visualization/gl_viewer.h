@@ -13,7 +13,7 @@ namespace GLRendering {
 
 	struct ModelAttrib{
 			std::shared_ptr<Geometry> model;
-			std::shared_ptr<std::vector<float>> data;
+			std::vector<float> edges_data;
 			glm::mat4 modelMatrix;
 			glm::vec3 modelColor;
 			GLenum renderingMode;

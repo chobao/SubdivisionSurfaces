@@ -36,7 +36,16 @@ public:
                    const std::vector<std::vector<index_t>>& polygons);
         std::tuple<std::vector<float>, size_t> ConvertToTriangularMesh();
 
-        bool CommonVertex(const Edge& e1, const Edge& e2, index_t& vertex_id);
+        static bool CommonVertex(const std::shared_ptr<Edge>& e1, const std::shared_ptr<Edge>& e2, index_t& vertex_id) {
+            if(e1->id1 == e2->id1 || e1->id1 == e2->id2) {
+                vertex_id = e1->id1;
+                return true;
+            } else if(e1->id2 == e2->id1 || e1->id2 == e2->id2) {
+                vertex_id = e1->id2;
+                return true;
+            }
+            return false;
+        }
 
         inline const std::shared_ptr<Edge> EdgeElement(const int i) const {return edges_.at(i);}
         inline const std::shared_ptr<Vertex> VertexElement(const int i) const {return vertices_.at(i);}

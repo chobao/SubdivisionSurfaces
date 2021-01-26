@@ -33,10 +33,20 @@ namespace CommonUtils {
     template<typename T>
     int Round(T x) { return int(x + 0.5);}
 
-    inline void PrintSizetVector(const std::vector<size_t>& ids) {
-        std::cout<<"("<<ids.size()<<"): ";
+    template<typename T>
+    void Print(const std::vector<T>& ids) {
+        std::cout<<"# "<<ids.size()<<"): ";
         for(int i = 0 ; i < ids.size() ; i++) {
             std::cout<<ids[i]<<" ";
+        }
+        std::cout<<"\n";
+    }
+
+    template<typename T>
+    void PrintEigenVector(const std::vector<T>& ids) {
+        std::cout<<"#"<<ids.size()<<" :\n";
+        for(int i = 0 ; i < ids.size() ; i++) {
+            std::cout<<"("<<i<<")"<<(ids[i]).transpose()<<"\n";
         }
         std::cout<<"\n";
     }

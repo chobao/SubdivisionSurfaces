@@ -200,12 +200,14 @@ namespace GLRendering {
 				Output("color", modelItem.second.modelColor);
 			}
 			glColor3f(modelItem.second.modelColor.x, modelItem.second.modelColor.y, modelItem.second.modelColor.z); 
-			std::shared_ptr<std::vector<float>> data = modelItem.second.data;
-			for(int j = 0 ; j < data->size() ; j+=3) {
+			const std::vector<float>& data = modelItem.second.edges_data;
+			// data must satisfy (data.size() / 3) %2 == 0
+			// for (data[j*3] . .) and (data[(j+1)*3] . .) producing  a line
+			for(int j = 0 ; j < data.size() ; j+=3) {
 				if(verbose) {
-					std::cout<<"vertex ("<<j / 3<<")"<<data->at(j)<<", "<<data->at(j+1)<<", "<<data->at(j+2)<<"\n";
+					std::cout<<"vertex ("<<j / 3<<")"<<data.at(j)<<", "<<data.at(j+1)<<", "<<data.at(j+2)<<"\n";
 				}
-				glVertex3f(data->at(j), data->at(j+1), data->at(j+2));
+				glVertex3f(data.at(j), data.at(j+1), data.at(j+2));
 			}
 		}
 		glEnd();
@@ -287,21 +289,27 @@ namespace GLRendering {
 
 
 		//preserve data for drawing wireframe
-		models_[idx].data = std::make_shared<std::vector<float>>();
-		models_[idx].data->reserve(3 * num_vertex);
+		
+		models_[idx].edges_data.reserve(3 * num_vertex);
 		for(int i = 0 ; i < num_vertex ; i++) {
-			models_[idx].data->emplace_back(pData[i * stride]);
-			models_[idx].data->emplace_back(pData[i * stride + 1]);
-			models_[idx].data->emplace_back(pData[i * stride + 2]);
+			int edge_id1 = i * stride;
+			int edge_id2 = (i % 3 == 2 ? ((i - 2) * stride) : ((i + 1) * stride));
+			models_[idx].edges_data.emplace_back(pData[edge_id1]);
+			models_[idx].edges_data.emplace_back(pData[edge_id1 + 1]);
+			models_[idx].edges_data.emplace_back(pData[edge_id1 + 2]);
+
+			models_[idx].edges_data.emplace_back(pData[edge_id2]);
+			models_[idx].edges_data.emplace_back(pData[edge_id2 + 1]);
+			models_[idx].edges_data.emplace_back(pData[edge_id2 + 2]);
 		}
 
 		if(verbose) {
 			std::cout<<"Points:\n";
-			for(int i = 0 ; i < models_[idx].data->size() ; i+=3) {
+			for(int i = 0 ; i < models_[idx].edges_data.size() ; i+=3) {
 				std::cout<<"("<< i / 3<<") ";
-				std::cout<<models_[idx].data->at(i)<<" ";
-				std::cout<<models_[idx].data->at(i + 1)<<" ";
-				std::cout<<models_[idx].data->at(i + 2)<<" ";
+				std::cout<<models_[idx].edges_data.at(i)<<" ";
+				std::cout<<models_[idx].edges_data.at(i + 1)<<" ";
+				std::cout<<models_[idx].edges_data.at(i + 2)<<" ";
 				std::cout<<"\n";
 			}
 		}

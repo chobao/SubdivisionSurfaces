@@ -6,8 +6,8 @@ namespace SubDivision {
 
     class SubDivisionSolver {
     public:
-        std::vector<index_t> GetEdgePoints(const Mesh& mesh);
-        std::vector<index_t> GetFacePoints(const Mesh& mesh);
+        std::vector<Eigen::Vector3d> GetEdgePoints(const Mesh& mesh);
+        std::vector<Eigen::Vector3d> GetFacePoints(const Mesh& mesh);
         
         inline const Eigen::Vector3d& PointElement(index_t i) {return  point_table_.at(i);} 
         inline index_t CreatePoint(const Eigen::Vector3d& p) {
@@ -17,6 +17,13 @@ namespace SubDivision {
 
         void MakeUpMesh(std::vector<std::vector<index_t>>& polygons,
                         Mesh& updated_mesh); //order polygons in clockwise
+        
+
+        void PrintPointTable() {
+            for(int i = 0 ; i < point_table_.size() ; i++) {
+                std::cout<<"("<<i<<")"<<point_table_[i].transpose()<<"\n";
+            }
+        }
 
 
     protected:

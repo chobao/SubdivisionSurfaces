@@ -51,7 +51,7 @@ public:
         inline const std::shared_ptr<Vertex> VertexElement(const int i) const {return vertices_.at(i);}
         inline const Eigen::Vector3d& VertexPoint(const int i) const {return vertices_.at(i)->p;}
 
-        inline const std::shared_ptr<Polygon> polygonElement(const int i) const {return polygons_.at(i);}
+        inline const std::shared_ptr<Polygon> PolygonElement(const int i) const {return polygons_.at(i);}
         inline const std::vector<std::shared_ptr<Vertex>>& Vertices() const {return vertices_;}
         inline const std::vector<std::shared_ptr<Edge>>& Edges() const {return edges_;}
         inline const std::vector<std::shared_ptr<Polygon>>& Polygons() const {return polygons_;}

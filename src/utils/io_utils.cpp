@@ -4,7 +4,8 @@
 namespace CommonUtils {
 bool LoadObj(const std::string& file_path,
                 std::vector<Eigen::Vector3d>& vertices, 
-                std::vector<std::vector<index_t>>& polygons) {
+                std::vector<std::vector<index_t>>& polygons,
+                float b_split_polygon) {
         std::ifstream file(file_path);
         if (!file.is_open()) {
             std::cerr << "fail to open file " + file_path << std::endl;
@@ -36,33 +37,21 @@ bool LoadObj(const std::string& file_path,
                 }
 
                 if (index_v.size() > 2) {
-    #ifdef TRIANGULAR
-                    for(int i = 0 ; i < index_v.size() ; i+=2) {
-                        // int nxt_i = (i + 1)%(index_v.size());
-                        int nxt_i = i + 1;
-                        if(nxt_i >= index_v.size()) {
-                            continue;
+                    if(b_split_polygon) {
+                        const index_t id0 = index_v[0];
+                        for(int j = 1 ,sz = index_v.size() - 1; j < sz ;j++) {
+                            //push vertex
+                            polygons.emplace_back(std::vector<index_t>{id0, index_v[j], index_v[j+1]});
+                            vertex_cnt += 3;
+                            face_cnt++;
                         }
-                        int after_nxt_i = (i + 2)%(index_v.size());
-
-                        Eigen::Vector3d &a = vertices[index_v[i]],
-                            &b = vertices[index_v[nxt_i]], &c = vertices[index_v[after_nxt_i]];
-                        // Vec3f &normal = Normalize(Cross(b - a, c - b));
-
-                        // face.m_normal = normal;
-                        // for (auto &i : vertex_idx) {
-                        //     face.vertices.push_back(vertices[i]);
-                        //     vertex_cnt++;
-                        // }
-                        planes_.push_back(Plane(a,b,c));
-                        vertex_cnt += 3;
+                    }
+                    else {
+                        polygons.push_back(index_v);
+                        vertex_cnt += index_v.size();
                         face_cnt++;
                     }
-    #else
-                    polygons.push_back(index_v);
-                    vertex_cnt += index_v.size();
-                    face_cnt++;
-    #endif 
+                    
                 }
             }
         }

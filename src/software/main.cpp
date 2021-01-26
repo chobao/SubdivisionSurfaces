@@ -4,6 +4,7 @@
 #include "utils/io_utils.h"
 #include "subdivision/mesh.h"
 #include "subdivision/catmull_solver.h"
+#include "subdivision/loop_solver.h"
 #include "utils/geometry_utils.h"
 #include <numeric>
 
@@ -90,7 +91,7 @@ int solve( const CommonUtils::Config& config) {
 
     std::vector<Eigen::Vector3d> vertices;
     std::vector<std::vector<index_t>> polygons;
-    CommonUtils::LoadObj(config.model_path, vertices, polygons);
+    CommonUtils::LoadObj(config.model_path, vertices, polygons,true);
     std::vector<SubDivision::Mesh> meshes;
     meshes.reserve(num_levels);
     meshes.emplace_back(SubDivision::Mesh());
@@ -100,9 +101,12 @@ int solve( const CommonUtils::Config& config) {
     //meshes[0]->PrintPolygon();
 
     SubDivision::CatmullClarkSolver clark_division_solver;
+    SubDivision::LoopSolver loop_division_solver;
+
+
     for(int i = 1 ; i < num_levels ; i++) {
         SubDivision::Mesh updated_mesh;
-        if(!clark_division_solver.Run((meshes[i-1]), (updated_mesh))) {
+        if(!loop_division_solver.Run((meshes[i-1]), (updated_mesh))) {
             break;
         }
         meshes.emplace_back(updated_mesh);

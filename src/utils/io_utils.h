@@ -8,7 +8,8 @@
 namespace CommonUtils {
     bool LoadObj(const std::string& file_path,
                 std::vector<Eigen::Vector3d>& vertices, 
-                std::vector<std::vector<index_t>>& polygons);
+                std::vector<std::vector<index_t>>& polygons,
+                float b_split_polygon = false);
 
     
     //Read content from file path and return pointer of the buffer

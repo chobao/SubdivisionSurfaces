@@ -124,11 +124,11 @@ namespace SubDivision {
                 }
                 face_pt = face_pt / num_asso_polygons;
 
-
                 if(num_asso_polygons < 3) {
                     std::cerr << "Error: There is line which may caused by level of subdivision is too high.\n";
                     return false;
                 }
+                
                 Eigen::Vector3d updated_vertex = (face_pt + 2 * edge_pt + (num_asso_polygons - 3) * old_point)/ num_asso_polygons;
 
                 updated_vertices[i] = CreatePoint(updated_vertex);

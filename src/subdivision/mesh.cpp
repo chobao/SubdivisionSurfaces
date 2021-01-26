@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include <unordered_map>
 #include <map>
+#include <cmath>
 
 namespace SubDivision {
 
@@ -92,17 +93,37 @@ namespace SubDivision {
     void Mesh::ResetNorm() {
 
         for(int i = 0 ; i < polygons_.size() ; i++) {
-            const size_t num_points = polygons_[i]->points.size();
+            const size_t num_points = polygons_[i]->NumPoints();
+            polygons_[i]->norm = Eigen::Vector3d::Zero();
             if(num_points < 2) {
-                polygons_[i]->norm = Eigen::Vector3d::Zero();
                 continue;
             }
             const Eigen::Vector3d& p1 = VertexPoint(polygons_[i]->points[0]);
             const Eigen::Vector3d& p2 = VertexPoint(polygons_[i]->points[1]);
             const Eigen::Vector3d& p3 = VertexPoint(polygons_[i]->points[2]);
-            polygons_[i]->norm = (p2 - p1).cross(p3 - p1);
+            polygons_[i]->norm = ((p2 - p1).cross(p3 - p1)).normalized();
         }
     }
+
+    // void Mesh::FeedNorm(const Model& model) {
+
+    //     for(int i = 0 ; i < polygons_.size() ; i++) {
+            
+    //         const Eigen::Vector3d plane_norm = model.PlaneElement(i).Norm();
+    //         double norm1 = polygons_[i]->norm.norm();
+    //         double norm2 = plane_norm.norm();
+    //         std::cout<<i<<" ";
+    //         std::cout<<"polygons_ :"<<polygons_[i]->norm.transpose()<<"\n";
+    //         std::cout<<"plane_norm :"<<plane_norm.transpose()<<"\n";
+    //         std::cout<<std::fixed<<std::setprecision(5)<<"polygons_[i]->norm.dot(plane_norm):"<<(double)polygons_[i]->norm.dot(plane_norm)<<"\n";
+    //         std::cout<<std::fixed<<std::setprecision(5)<<"norm multiplication:"<<(double)(norm1 * norm2)<<"\n";
+
+    //         double degree = polygons_[i]->norm.dot(plane_norm) / (norm1 * norm2);
+    //         std::cout<<"degree: "<<degree<<"\n";
+    //         std::cout<<i<<" "<<std::acos(degree) / 180.0 * M_PI <<"\n";
+    //         //polygons_[i]->norm = plane_norm;
+    //     }
+    // }
 
     std::tuple<std::shared_ptr<std::vector<float>>, size_t> Mesh::ConvertToTriangularMesh() {
     

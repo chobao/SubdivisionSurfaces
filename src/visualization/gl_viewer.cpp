@@ -26,7 +26,7 @@ namespace GLRendering {
 		screen_height_ =screen_height;
 		firstMouse_ = true;
 		vertex_shader_path_ = vertex_shader_path, fragment_shader_path_ = fragment_shader_path;
-		b_show_wireframe_ = true;
+		b_show_wireframe_ = false;
 		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
 		light_pos_ = glm::vec3(screen_width / 2.0, screen_height / 2.0, 1000.0f);
 		if(InitializeContext()) {
@@ -246,6 +246,7 @@ namespace GLRendering {
 										const glm::mat4& modelMatrix) {  
 		
 		if(verbose) {
+			std::cout<<"pData:\n";
 			for(int i = 0 ; i < num_vertex ; i++) {
 				int index = i * stride;
 				std::cout<<"("<<i<<") ";
@@ -263,7 +264,7 @@ namespace GLRendering {
 		}
 
 		const int idx = models_.size();
-		//models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
+		models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
 		models_[idx].modelMatrix = modelMatrix;
 		models_[idx].modelColor = modelColor;
 		models_[idx].renderingMode = GL_TRIANGLES;
@@ -279,6 +280,7 @@ namespace GLRendering {
 		}
 
 		if(verbose) {
+			std::cout<<"Points:\n";
 			for(int i = 0 ; i < models_[idx].data->size() ; i+=3) {
 				std::cout<<"("<< i / 3<<") ";
 				std::cout<<models_[idx].data->at(i)<<" ";
@@ -413,7 +415,5 @@ namespace GLRendering {
 		camera->UpdateOldMousePos(x, y);
 		//glutPostRedisplay();
 	}
-	
-	
 
 }

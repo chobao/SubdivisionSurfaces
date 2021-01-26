@@ -4,7 +4,7 @@
 #include <Eigen/Core>
 #include <memory>
 #include "utils/common_utils.h"
-
+#include "base/model.h"
 
 namespace SubDivision {
      using CommonUtils::index_t;
@@ -48,6 +48,7 @@ public:
         inline const std::vector<std::shared_ptr<Polygon>>& Polygons() const {return polygons_;}
         void PrintPolygon();
         void PrintObj();
+        void FeedNorm(const Model& model);
 
        
 

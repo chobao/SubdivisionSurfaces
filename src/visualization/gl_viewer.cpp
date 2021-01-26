@@ -179,18 +179,32 @@ namespace GLRendering {
 		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 10000.0f);
 		glMultMatrixf(glm::value_ptr(projection));
 
-
+		if(verbose) {
+			std::cout<<"/// Rendering Fixed() \n";
+		}
 		
 		glMatrixMode(GL_MODELVIEW); //view matrix
 		glPushMatrix();
 		glLoadIdentity();
-		glMultMatrixf(glm::value_ptr(camera.ViewMatrix()));
+		const glm::mat4 view_matrix = camera.ViewMatrix();
+		glMultMatrixf(glm::value_ptr(view_matrix));
+
+		if(verbose) {
+			Output("projection", projection);
+			Output("view_matrix", view_matrix);
+		}
 		glBegin(GL_LINES);
 		
 		for(auto& modelItem: models_) {
+			if(verbose) {
+				Output("color", modelItem.second.modelColor);
+			}
 			glColor3f(modelItem.second.modelColor.x, modelItem.second.modelColor.y, modelItem.second.modelColor.z); 
 			std::shared_ptr<std::vector<float>> data = modelItem.second.data;
 			for(int j = 0 ; j < data->size() ; j+=3) {
+				if(verbose) {
+					std::cout<<"vertex ("<<j / 3<<")"<<data->at(j)<<", "<<data->at(j+1)<<", "<<data->at(j+2)<<"\n";
+				}
 				glVertex3f(data->at(j), data->at(j+1), data->at(j+2));
 			}
 		}
@@ -254,6 +268,7 @@ namespace GLRendering {
 				for(int j = 0 ; j < 9 ;j++) {
 					std::cout<<pData[index + j]<<" ";
 				}
+				std::cout<<"indices : "<< index + 8 <<"\n";
 				std::cout<<"\n";
 			}
 		}
@@ -290,6 +305,8 @@ namespace GLRendering {
 				std::cout<<"\n";
 			}
 		}
+
+		delete[] indices;
 
 		return &(models_[idx]);
 		

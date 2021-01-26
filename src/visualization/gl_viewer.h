@@ -92,7 +92,7 @@ namespace GLRendering {
 		bool b_show_wireframe_;
 		Shader shader_;
 		GLFWwindow* window_;
-		const bool verbose = true;
+		const bool verbose = false;
 		
 	};
 

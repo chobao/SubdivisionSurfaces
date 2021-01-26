@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <vector>
-#include "utils/common_utils.h"
+#include "gl_utils.h"
 
 namespace GLRendering {
 
@@ -22,10 +22,17 @@ namespace GLRendering {
 	class TurnTableCamera {
 	public:
 		TurnTableCamera(float eye_x = 0.0f, float eye_y = 0.0f, float eye_z = 0.0f): 
-			eye_x_(eye_x_), eye_y_(eye_y), eye_z_(eye_z){
+			eye_x_(eye_x), eye_y_(eye_y), eye_z_(eye_z){
 			spin_x_ = 0.0f, spin_y_ = 0.0f;
+			old_x_ = 0.0f, old_y_ = 0.0f;
 			zoom_ = ZOOM;
 			sensitivity_ = 1000;
+			if(verbose) {
+				std::cout<<"Initialization old "<<old_x_<<"," <<old_y_<<"\n";
+				std::cout<<"Initialization eye: "<<eye_x_<<", "<<eye_y_<<"," <<eye_z_<<"\n";
+			}
+			
+
 		}
 
 		void ProcessMouseScroll(float yoffset) {
@@ -56,9 +63,23 @@ namespace GLRendering {
 		}
 
 		glm::mat4 ViewMatrix() const{
+			if(verbose) {
+				std::cout<<"eye: "<<eye_x_<<", "<<eye_y_<<"," <<eye_z_<<"\n";
+			}
 			glm::mat4 view_matrix = glm::lookAt(glm::vec3(eye_x_, eye_y_, eye_z_), glm::vec3(eye_x_, eye_y_, eye_z_ - 1), glm::vec3(0, 1, 0));
+			if(verbose) {
+				Output("view mat1",view_matrix);
+			}
 			view_matrix = glm::rotate(view_matrix, static_cast<float>(spin_y_ * M_PI / 180.0), glm::vec3(1,0,0));
+			if(verbose) {
+				Output("view mat2",view_matrix);
+			}
+			
 			view_matrix = glm::rotate(view_matrix, static_cast<float>(spin_x_ * M_PI / 180.0), glm::vec3(0,1,0));
+			if(verbose) {
+				Output("view mat3",view_matrix);
+			}
+
 			return view_matrix;
 			// 	turn table
 			// // glRotatef(spin_y_, 1, 0, 0);
@@ -75,5 +96,6 @@ namespace GLRendering {
 		float old_x_, old_y_;
 		float zoom_;
 		float sensitivity_;
+		const bool verbose = false;
 	};
 }

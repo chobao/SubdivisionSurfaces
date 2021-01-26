@@ -94,11 +94,6 @@ int solve( const CommonUtils::Config& config) {
     auto mesh0 = std::make_shared<SubDivision::Mesh>();
     meshes.emplace_back(mesh0);
     meshes[0]->SetUp(vertices, polygons);
-    //Model model;
-    //model.LoadObj(config.model_path);
-    {
-        //meshes[0]->FeedNorm(model);
-    }
     
     //meshes[0]->PrintObj();
     //meshes[0]->PrintPolygon();
@@ -118,14 +113,6 @@ int solve( const CommonUtils::Config& config) {
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();
     if(viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path)) {
         viewer.CreateMeshPNC(pData.data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
-        {
-            // size_t num_vertex;
-            // std::shared_ptr<std::vector<float>> vertices;
-            // std::tie(vertices, num_vertex) = model.ConvertToTriangularMesh();
-            // std::cout<<"model:\n";
-            // viewer.CreateMeshPNC(vertices->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
-
-        }
         viewer.Run();
     }
     

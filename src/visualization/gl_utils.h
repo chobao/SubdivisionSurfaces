@@ -13,4 +13,10 @@ namespace GLRendering {
         }
     }
 
+    inline void Output(const std::string name, const glm::vec3& vec) {
+            printf("DEBUG(BCHO): %s, %f, %f, %f\n", name.c_str(),
+                 vec[0], vec[1], vec[2]);
+
+    }
+
 }

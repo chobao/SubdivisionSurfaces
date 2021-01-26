@@ -27,6 +27,7 @@ namespace GLRendering {
 		firstMouse_ = true;
 		vertex_shader_path_ = vertex_shader_path, fragment_shader_path_ = fragment_shader_path;
 		b_show_wireframe_ = false;
+		view_level_ = -1;
 		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
 		light_pos_ = glm::vec3(screen_width / 2.0, screen_height / 2.0, 1000.0f);
 		if(InitializeContext()) {
@@ -118,11 +119,7 @@ namespace GLRendering {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//	========================================================
-			if(b_show_wireframe_) {
-				RenderFixed();
-			} else {
-				Render();
-			}
+			Display();
 			//  ========================================================
 
 
@@ -170,7 +167,18 @@ namespace GLRendering {
 		return succ;
     }
 
-	void Viewer::RenderFixed() {
+	void Viewer::Display() {
+		if(view_level_ == -1) {
+			return;
+		}
+		if(b_show_wireframe_) {
+			RenderFixed(models_.at(view_level_));
+		} else {
+			Render(models_.at(view_level_));
+		}
+	}
+
+	void Viewer::RenderFixed(const ModelAttrib& modelItem) {
 		const auto& camera = CallBackController::Instance().GetCamera();
 
 		glMatrixMode(GL_PROJECTION); //project matrix
@@ -195,12 +203,12 @@ namespace GLRendering {
 		}
 		glBegin(GL_LINES);
 		
-		for(auto& modelItem: models_) {
+		//for(auto& modelItem: models_) {
 			if(verbose) {
-				Output("color", modelItem.second.modelColor);
+				Output("color", modelItem.modelColor);
 			}
-			glColor3f(modelItem.second.modelColor.x, modelItem.second.modelColor.y, modelItem.second.modelColor.z); 
-			const std::vector<float>& data = modelItem.second.edges_data;
+			glColor3f(modelItem.modelColor.x, modelItem.modelColor.y, modelItem.modelColor.z); 
+			const std::vector<float>& data = modelItem.edges_data;
 			// data must satisfy (data.size() / 3) %2 == 0
 			// for (data[j*3] . .) and (data[(j+1)*3] . .) producing  a line
 			for(int j = 0 ; j < data.size() ; j+=3) {
@@ -209,13 +217,14 @@ namespace GLRendering {
 				}
 				glVertex3f(data.at(j), data.at(j+1), data.at(j+2));
 			}
-		}
+		//}
 		glEnd();
 		glPopMatrix();
 
 	}
 
-	void Viewer::Render(){
+	void Viewer::Render(ModelAttrib& modelItem){
+		
 		const auto& camera = CallBackController::Instance().GetCamera();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.zoom_), (float)screen_width_ / (float)screen_height_, 0.1f, 100.0f);
 		//glm::mat4 view_matrix = camera.ViewMatrix(); //occasion 2
@@ -243,16 +252,16 @@ namespace GLRendering {
 		shader_.SetUniformVec3("lightPos", light_pos_);
 
 
-		{
-			for(auto& modelItem: models_) {
+		//{
+			//for(auto& modelItem: models_) {
 				shader_.SetUniformMat4("modelMatrix",model_matrix); //occasion 1
 				//shader_.SetUniformMat4("modelMatrix",modelItem.second.modelMatrix); //occasion 2
 
-				shader_.SetUniformVec3("modelColor",modelItem.second.modelColor);
+				shader_.SetUniformVec3("modelColor",modelItem.modelColor);
 
-				modelItem.second.model->Submit(modelItem.second.renderingMode);
-			}
-		}
+				modelItem.model->Submit(modelItem.renderingMode);
+			//}
+		//}
 		
 		shader_.Unbind();
 	}
@@ -315,6 +324,10 @@ namespace GLRendering {
 		}
 
 		delete[] indices;
+
+		if(view_level_ == -1) {
+			view_level_ = 0;
+		}
 
 		return &(models_[idx]);
 		
@@ -379,8 +392,20 @@ namespace GLRendering {
 		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window_, true);
 
-		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS)
+		if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS)
 			b_show_wireframe_ = !b_show_wireframe_;
+
+		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+			if(models_.count(view_level_ + 1)) {
+				view_level_ += 1;
+			}
+		}
+
+		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+			if(models_.count(view_level_ - 1)) {
+				view_level_ -= 1;
+			}
+		}
 			
 	}
 

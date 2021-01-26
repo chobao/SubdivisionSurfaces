@@ -86,7 +86,7 @@ int testModel( const CommonUtils::Config& config){
 int solve( const CommonUtils::Config& config) {
     const std::string file_path;
     const int scr_width = config.view_width, scr_height = config.view_height;
-    const size_t num_levels = 2;
+    size_t num_levels = 3;
 
     std::vector<Eigen::Vector3d> vertices;
     std::vector<std::vector<index_t>> polygons;
@@ -102,22 +102,25 @@ int solve( const CommonUtils::Config& config) {
     SubDivision::CatmullClarkSolver clark_division_solver;
     for(int i = 1 ; i < num_levels ; i++) {
         SubDivision::Mesh updated_mesh;
-        clark_division_solver.Run((meshes[i-1]), (updated_mesh));
+        if(!clark_division_solver.Run((meshes[i-1]), (updated_mesh))) {
+            break;
+        }
         meshes.emplace_back(updated_mesh);
     }
+    num_levels = meshes.size();
+    std::cout<<"max level : "<<num_levels<<"\n";
 
     
 
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();
     if(viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path)) {
 
-        for(int i = 1 ; i < num_levels ; i++) {
+        for(int i = 0 ; i < num_levels ; i++) {
             std::vector<float> pData;
             size_t num_vertex;
             std::tie(pData, num_vertex) = meshes[i].ConvertToTriangularMesh();
             std::cout<<i<<" pData->size(): "<<pData.size()<<"\n";
             viewer.CreateMeshPNC(pData.data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
-            break;
         }
         viewer.Run();
     }
@@ -178,7 +181,7 @@ void test3dOrdering() {
 int main(){
      CommonUtils::Config config;
     config.view_width = 800, config.view_height = 600;
-    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/cube.obj";
+    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/teapot.obj";
     config.vertex_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_v.glsl";
     config.fragment_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_f.glsl";
     solve(config);

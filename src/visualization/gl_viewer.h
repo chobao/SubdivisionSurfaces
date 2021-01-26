@@ -56,10 +56,12 @@ namespace GLRendering {
 		*/
 		void Run();
 
-		void RenderFixed();
+		void RenderFixed(const ModelAttrib& modelItem);
 
 
-		void Render();
+		void Render(ModelAttrib& modelItem);
+
+		void Display();
 
 		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix);
@@ -93,6 +95,7 @@ namespace GLRendering {
 		Shader shader_;
 		GLFWwindow* window_;
 		const bool verbose = false;
+		int view_level_;
 		
 	};
 

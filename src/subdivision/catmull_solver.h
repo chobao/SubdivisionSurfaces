@@ -5,7 +5,7 @@ namespace SubDivision {
 
     class CatmullClarkSolver: public SubDivisionSolver {
     public:
-        void Run(const Mesh& mesh, Mesh& updated_mesh);
+        bool Run(const Mesh& mesh, Mesh& updated_mesh);
 
         void UpdateFacePoints(const std::vector<Eigen::Vector3d>& face_points, 
                               std::vector<index_t>& updated_face_points);
@@ -13,7 +13,7 @@ namespace SubDivision {
         void UpdateEdgePoints(const Mesh& mesh, 
                     const std::vector<Eigen::Vector3d>& face_points, 
                     std::vector<index_t>& updated_edge_points);
-        void UpdateVertices(const Mesh& mesh, const std::vector<Eigen::Vector3d>& face_points, 
+        bool UpdateVertices(const Mesh& mesh, const std::vector<Eigen::Vector3d>& face_points, 
                             const std::vector<Eigen::Vector3d>& edge_points,
                             std::vector<index_t>& updated_vertices);
 

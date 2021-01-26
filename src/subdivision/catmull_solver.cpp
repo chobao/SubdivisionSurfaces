@@ -1,6 +1,6 @@
 #include "catmull_solver.h"
 namespace SubDivision {
-    void CatmullClarkSolver::Run(const Mesh& mesh, Mesh& updated_mesh) {
+    bool CatmullClarkSolver::Run(const Mesh& mesh, Mesh& updated_mesh) {
         std::vector<Eigen::Vector3d> edge_points = GetEdgePoints(mesh);  //mesh.edges <-> edge_points (index consistence)
         std::vector<Eigen::Vector3d> face_points = GetFacePoints(mesh);  //mesh.polygons <-> face_points (index consistence)
         std::vector<index_t> updated_face_points;  //mesh.polygons <-> updated_face_points (index consistence)
@@ -26,7 +26,9 @@ namespace SubDivision {
             std::cout<<"UpdateEdgePoints:\n";
             PrintPointTable();
         }
-        UpdateVertices(mesh, face_points, edge_points, updated_vertices);
+        if(!UpdateVertices(mesh, face_points, edge_points, updated_vertices)) {
+            return false;
+        }
         if(verbose) {
             std::cout<<"UpdateVertices:\n";
             PrintPointTable();
@@ -53,6 +55,7 @@ namespace SubDivision {
                 CommonUtils::Print<index_t>(out_poly);
             }
         }
+        return true;
     }
 
     void CatmullClarkSolver::UpdateFacePoints(const std::vector<Eigen::Vector3d>& face_points,
@@ -87,7 +90,7 @@ namespace SubDivision {
         }
     }
 
-    void CatmullClarkSolver::UpdateVertices(const Mesh& mesh, const std::vector<Eigen::Vector3d>& face_points,
+    bool CatmullClarkSolver::UpdateVertices(const Mesh& mesh, const std::vector<Eigen::Vector3d>& face_points,
                             const std::vector<Eigen::Vector3d>& edge_points,
                             std::vector<index_t>& updated_vertices) {
         const auto& vertices = mesh.Vertices();
@@ -122,12 +125,16 @@ namespace SubDivision {
                 face_pt = face_pt / num_asso_polygons;
 
 
-                assert(num_asso_polygons >= 3);
+                if(num_asso_polygons < 3) {
+                    std::cerr << "Error: There is line which may caused by level of subdivision is too high.\n";
+                    return false;
+                }
                 Eigen::Vector3d updated_vertex = (face_pt + 2 * edge_pt + (num_asso_polygons - 3) * old_point)/ num_asso_polygons;
 
                 updated_vertices[i] = CreatePoint(updated_vertex);
             }
         }
+        return true;
 
     }
 

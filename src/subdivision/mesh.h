@@ -34,7 +34,7 @@ namespace SubDivision {
 public:
         void SetUp(const std::vector<Eigen::Vector3d>& vertices, 
                    const std::vector<std::vector<index_t>>& polygons);
-        std::tuple<std::shared_ptr<std::vector<float>>, size_t> ConvertToTriangularMesh();
+        std::tuple<std::vector<float>, size_t> ConvertToTriangularMesh();
 
         bool CommonVertex(const Edge& e1, const Edge& e2, index_t& vertex_id);
 
@@ -58,6 +58,7 @@ private:
         std::vector<std::shared_ptr<Vertex>> vertices_;
         std::vector<std::shared_ptr<Edge>> edges_;
         std::vector<std::shared_ptr<Polygon>> polygons_;
+        const bool verbose = true;
 
 
     };

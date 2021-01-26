@@ -95,7 +95,8 @@ namespace SubDivision {
         for(int i = 0 ; i < polygons_.size() ; i++) {
             const size_t num_points = polygons_[i]->NumPoints();
             polygons_[i]->norm = Eigen::Vector3d::Zero();
-            if(num_points < 2) {
+            if(num_points <= 2) {
+                std::cout<<"Warning: line exists in mesh.\n";
                 continue;
             }
             const Eigen::Vector3d& p1 = VertexPoint(polygons_[i]->points[0]);
@@ -125,39 +126,41 @@ namespace SubDivision {
     //     }
     // }
 
-    std::tuple<std::shared_ptr<std::vector<float>>, size_t> Mesh::ConvertToTriangularMesh() {
+    std::tuple<std::vector<float>, size_t> Mesh::ConvertToTriangularMesh() {
     
-        std::shared_ptr<std::vector<float>> triangular_mesh = std::make_shared<std::vector<float>>();
+        std::vector<float> triangular_mesh;
         
         //collect data size
         size_t num_mesh = 0;
         for(int i = 0 ; i < polygons_.size() ; i++) {
             const size_t num_points = polygons_[i]->NumPoints();
-            if(num_points < 2) {
+            if(num_points <= 2) {
+                std::cout<<"Warning: line exists in mesh.\n";
                 continue;
             }
             num_mesh += num_points - 2;
         }
         //reserve vector size
-        triangular_mesh->reserve(num_mesh * 27);
+        triangular_mesh.reserve(num_mesh * 27);
 
         //push vertex and color data by order `p(0) p(1) p(1) n(0) n(1) n(2) r g b`
         auto func = [&](const Eigen::Vector3d& p, const Eigen::Vector3d& norm){
             for(int k = 0 ; k < 3 ; k++) {
-                triangular_mesh->emplace_back(p(k));
+                triangular_mesh.emplace_back(p(k));
             }
             for(int k = 0 ; k < 3 ; k++) {
-                triangular_mesh->emplace_back(norm(k));
+                triangular_mesh.emplace_back(norm(k));
             }
-            triangular_mesh->emplace_back(0.0f);
-            triangular_mesh->emplace_back(0.0f);
-            triangular_mesh->emplace_back(0.0f);
+            triangular_mesh.emplace_back(0.0f);
+            triangular_mesh.emplace_back(0.0f);
+            triangular_mesh.emplace_back(0.0f);
 
         };
 
         size_t num_vertex = 0;
         for(int i = 0 ; i < polygons_.size() ; i++) {
-            if(polygons_[i]->NumPoints() < 2) {
+            if(polygons_[i]->NumPoints() <= 2) {
+                std::cout<<"Warning: line exists in mesh.\n";
                 continue;
             }
             const std::vector<index_t>& points = polygons_[i]->points;
@@ -171,6 +174,10 @@ namespace SubDivision {
                 func(VertexPoint(points[j + 1]), norm);
                 num_vertex += 3;
             }
+        }
+
+        if(verbose) {
+            std::cout<<"num_mesh: "<<num_mesh<<" , "<<"num_vertex: "<<num_vertex<<", "<<"triangular_mesh.size(): "<<triangular_mesh.size()<<"\n";
         }
 
         return {triangular_mesh, num_vertex};

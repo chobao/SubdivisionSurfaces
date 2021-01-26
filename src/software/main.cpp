@@ -94,8 +94,14 @@ int solve( const CommonUtils::Config& config) {
     auto mesh0 = std::make_shared<SubDivision::Mesh>();
     meshes.emplace_back(mesh0);
     meshes[0]->SetUp(vertices, polygons);
-    meshes[0]->PrintObj();
-    meshes[0]->PrintPolygon();
+    //Model model;
+    //model.LoadObj(config.model_path);
+    {
+        //meshes[0]->FeedNorm(model);
+    }
+    
+    //meshes[0]->PrintObj();
+    //meshes[0]->PrintPolygon();
 
     // SubDivision::CatmullClarkSolver clark_division_solver;
     // for(int i = 1 ; i < num_levels ; i++) {
@@ -104,14 +110,22 @@ int solve( const CommonUtils::Config& config) {
     //     meshes.emplace_back(updated_mesh);
     // }
 
-    std::shared_ptr<std::vector<float>> pData;
+    std::vector<float> pData;
     size_t num_vertex;
     std::tie(pData, num_vertex) = meshes[0]->ConvertToTriangularMesh();
-    std::cout<<"pData->size(): "<<pData->size()<<"\n";
+    std::cout<<"pData->size(): "<<pData.size()<<"\n";
 
     GLRendering::Viewer& viewer =  GLRendering::Viewer::Instance();
     if(viewer.SetUp(scr_width, scr_height, config.vertex_shader_path, config.fragment_shader_path)) {
-        viewer.CreateMeshPNC(pData->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
+        viewer.CreateMeshPNC(pData.data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
+        {
+            // size_t num_vertex;
+            // std::shared_ptr<std::vector<float>> vertices;
+            // std::tie(vertices, num_vertex) = model.ConvertToTriangularMesh();
+            // std::cout<<"model:\n";
+            // viewer.CreateMeshPNC(vertices->data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
+
+        }
         viewer.Run();
     }
     

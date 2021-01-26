@@ -247,6 +247,7 @@ namespace GLRendering {
 		
 		if(verbose) {
 			std::cout<<"pData:\n";
+			std::cout<<"("<<stride<<", "<<num_vertex<<")\n";
 			for(int i = 0 ; i < num_vertex ; i++) {
 				int index = i * stride;
 				std::cout<<"("<<i<<") ";
@@ -264,7 +265,7 @@ namespace GLRendering {
 		}
 
 		const int idx = models_.size();
-		models_[idx].model = CreateGeometryPNC(pData, stride,num_vertex,indices, num_indices);
+		models_[idx].model = CreateGeometryPNC(pData, stride, num_vertex,indices, num_indices);
 		models_[idx].modelMatrix = modelMatrix;
 		models_[idx].modelColor = modelColor;
 		models_[idx].renderingMode = GL_TRIANGLES;

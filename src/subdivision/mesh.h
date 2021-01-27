@@ -20,6 +20,15 @@ namespace SubDivision {
         index_t id1;
 	    index_t id2;
         std::vector<index_t> associated_polygons;
+        bool FindNeighbourPolygon(const index_t& polygon_id1, index_t& polygon_id2) const{
+                for(const auto& polygon_idi: associated_polygons) {
+                    if(polygon_id1 != polygon_idi) {
+                        polygon_id2 = polygon_idi;
+                        return true;
+                    }
+                }
+                return false;
+        }
     };
 
     struct Polygon {
@@ -28,6 +37,9 @@ namespace SubDivision {
         Eigen::Vector3d norm;
 
         size_t NumPoints() { return points.size();}
+
+
+       
     };
 
     class Mesh {
@@ -58,6 +70,23 @@ public:
         void PrintPolygon();
         void PrintObj();
         void FeedNorm(const Model& model);
+
+        inline bool FindEdge(const index_t& polygon_id, const index_t& start_index,
+                             const index_t& vertex_id1,const index_t& vertex_id2,
+                             index_t& edge_id) const { // find the edge whose start points is vertex1 and end point is vertex 2 in the polygon
+            const std::shared_ptr<Polygon>& polygon = polygons_[polygon_id];
+            const auto& polygon_edges = polygon->edges;
+            for(int j = 0 ,sz = polygon_edges.size(); j < sz ; j++) {
+                int index = (j + start_index) % sz;
+                const std::shared_ptr<Edge>& edge  = EdgeElement(polygon_edges[index]);
+                if((edge->id1 == vertex_id1 && edge->id2 == vertex_id2) || 
+                    (edge->id1 == vertex_id2 && edge->id2 == vertex_id1)) {
+                        edge_id = polygon_edges[index];
+                        return true;
+                }
+            }
+            return false;
+        }
 
        
 

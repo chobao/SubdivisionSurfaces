@@ -107,6 +107,7 @@ int solve( const CommonUtils::Config& config) {
     SubDivision::DooSabinSolver doo_division_solver;
 
     for(int i = 1 ; i < num_levels ; i++) {
+        std::cout<<"/////level "<<i<<"\n";
         SubDivision::Mesh updated_mesh;
         if(!doo_division_solver.Run((meshes[i-1]), (updated_mesh))) {
             break;
@@ -187,7 +188,7 @@ void test3dOrdering() {
 int main(){
      CommonUtils::Config config;
     config.view_width = 800, config.view_height = 600;
-    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/cube.obj";
+    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/teapot.obj";
     config.vertex_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_v.glsl";
     config.fragment_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_f.glsl";
     solve(config);

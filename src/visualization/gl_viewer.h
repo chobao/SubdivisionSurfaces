@@ -8,6 +8,8 @@
 #include <memory>
 #include <map>
 #include <functional>
+//used by subdivision
+#include "utils/config.h"
 
 namespace GLRendering {
 
@@ -40,7 +42,7 @@ namespace GLRendering {
 		* @param[in] screen_height 
 		*/
 		bool SetUp(int screen_width, int screen_height, 
-					   const std::string& vertex_shader_path, const std::string& fragment_shader_path);
+					   const std::string& vertex_shader_path, const std::string& fragment_shader_path, const CommonUtils::Config& config);
 
 		/**
 		* @brief Main Loop of OpenGL Rendering in a fixed pipeline
@@ -66,7 +68,9 @@ namespace GLRendering {
 		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix);
 		
-		void PutText(float x, float y, std::string str);
+
+
+		void Subdivision(); //indenpent to rendering pipeline
 
 
 
@@ -76,6 +80,11 @@ namespace GLRendering {
                                   unsigned int* indices, const int num_indices); //analogous to SimpleApp::CreateFromObjFile
 		static bool InitializeShader(Shader &whichShader, const char *vertexPath, const char *fragmentPath,
                      				 const char *vertexName, const char *fragmentName);
+
+		void ResetContollingVariables();
+		void DisplayInitializationWindow();
+		void PutText(float x, float y, std::string str);
+		
 
 		/**
 		* @brief Implementation of keyboard clicking callback function
@@ -87,7 +96,6 @@ namespace GLRendering {
 		bool InitializeContext();
 		int screen_width_, screen_height_;
 		bool b_setup_;
-		bool firstMouse_;
 		std::string vertex_shader_path_, fragment_shader_path_;
 		glm::vec3 light_pos_;
 		std::map<int, ModelAttrib> models_;
@@ -98,7 +106,10 @@ namespace GLRendering {
 		int view_level_;
 
 		//initialization window
-
+		bool b_initialization_window_;
+		int used_method;
+		CommonUtils::Config config_;
+		std::string method_name ;
 		
 	};
 

@@ -7,7 +7,7 @@ namespace SubDivision {
 
     class DooSabinSolver: public SubDivisionSolver {
     public:
-        bool Run(const Mesh& mesh, Mesh& updated_mesh);
+        bool Run(const Mesh& mesh, Mesh& updated_mesh) override;
 
         bool UpdateVertices(const Mesh& mesh, const std::vector<Eigen::Vector3d>& face_points, 
                             const std::vector<Eigen::Vector3d>& edge_points, 

@@ -53,7 +53,7 @@ namespace GLRendering {
 				eye_y_ += float(y - old_y_) / (3 * sensitivity_);
 			}
 			else if (press == RIGHT_BUTTON) {
-				eye_z_ += float(y - old_y_) / (0.1 * sensitivity_);
+				eye_z_ += float(y - old_y_) / (0.01 * sensitivity_);
 			}
 		}
 

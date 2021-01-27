@@ -8,6 +8,7 @@ struct Config{
     std::string model_path;
     int view_width, view_height;
     std::string vertex_shader_path, fragment_shader_path;
+    int maximum_level;
 
     // bool SetUp(std::string config_path) {
     //     cv::FileStorage fs;

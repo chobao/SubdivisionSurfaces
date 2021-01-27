@@ -10,6 +10,17 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "utils/io_utils.h"
 
+//used by Subdivision
+#include "base/model.h"
+#include "utils/io_utils.h"
+#include "subdivision/mesh.h"
+#include "subdivision/catmull_solver.h"
+#include "subdivision/loop_solver.h"
+#include "utils/geometry_utils.h"
+#include "subdivision/doo_solver.h"
+#include <numeric>
+
+
 namespace GLRendering {
 
 
@@ -24,22 +35,29 @@ namespace GLRendering {
 	* @param[in] screen_height
 	*/
 	bool Viewer::SetUp(int screen_width, int screen_height, 
-					   const std::string& vertex_shader_path, const std::string& fragment_shader_path) 
+					   const std::string& vertex_shader_path, const std::string& fragment_shader_path,  const CommonUtils::Config& config) 
 	{
 		screen_width_ = screen_width;
 		screen_height_ =screen_height;
-		firstMouse_ = true;
 		vertex_shader_path_ = vertex_shader_path, fragment_shader_path_ = fragment_shader_path;
 		b_show_wireframe_ = false;
+		used_method = -1;
 		view_level_ = -1;
 		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
 		light_pos_ = glm::vec3(screen_width / 2.0, screen_height / 2.0, 1000.0f);
+		b_initialization_window_ = true;
+		config_ = config;
 		if(InitializeContext()) {
 			b_setup_ = true;
 		}
 		return b_setup_;
 		
+	}
 
+	void Viewer::ResetContollingVariables() {
+		CallBackController::Instance().SetUp(0.0f, 0.0f, 5.0f);  //set up camera
+		view_level_ = 0;
+		b_show_wireframe_ = false;
 	}
 
 	bool Viewer::InitializeContext() {
@@ -176,7 +194,34 @@ namespace GLRendering {
 		return succ;
     }
 
+	void Viewer::DisplayInitializationWindow() {
+		PutText(-0.9f, 0.85f, "Please enter a key to select subdivision method:");
+		PutText(-0.9f, 0.78f, "Z: Loop subdivision");
+		PutText(-0.9f, 0.71f, "X: Catmull-Clark subdivision");
+		PutText(-0.9f, 0.64f, "C: Doo-Sabin subdivision");
+		if(used_method >= 0) {
+			if(used_method == 0) {
+				method_name = "Loop subdivision";
+			}else if(used_method == 1) {
+				method_name = "Catmull-Clark subdivision";
+			} else {
+				method_name = "Doo-Sabin subdivision";
+
+			}
+			Subdivision();
+			ResetContollingVariables();
+			b_initialization_window_ = false;
+		}
+			
+	}
+
 	void Viewer::Display() {
+
+		if(b_initialization_window_) {
+			DisplayInitializationWindow();
+			return;
+		}
+		
 		if(view_level_ == -1) {
 			return;
 		}
@@ -421,6 +466,60 @@ namespace GLRendering {
     	return new_model;
 	}
 
+	void Viewer::Subdivision() {
+
+		size_t num_levels = config_.maximum_level;
+		std::vector<Eigen::Vector3d> vertices;
+		std::vector<std::vector<index_t>> polygons;
+		bool b_split_triangle = false;
+		if(used_method == 0) {
+			b_split_triangle = true; // split input mesh into triangles for loop subdivison 
+		}
+		CommonUtils::LoadObj(config_.model_path, vertices, polygons,b_split_triangle);
+		std::vector<SubDivision::Mesh> meshes;
+		meshes.reserve(num_levels);
+		meshes.emplace_back(SubDivision::Mesh());
+		meshes[0].SetUp(vertices, polygons);
+		
+		//meshes[0].PrintObj();
+		//meshes[0]->PrintPolygon();
+		SubDivision::SubDivisionSolver* division_solver;
+		SubDivision::CatmullClarkSolver clark_division_solver;
+		SubDivision::LoopSolver loop_division_solver;
+		SubDivision::DooSabinSolver doo_division_solver;
+		if(used_method == 0) {
+			std::cout<<"Start Loop division\n";
+			division_solver = &loop_division_solver;
+		} else if(used_method == 1) {
+			std::cout<<"Start CatmullClark division\n";
+			division_solver = &clark_division_solver;
+		}else {
+			std::cout<<"Start DooSabin division\n";
+			division_solver = &doo_division_solver;
+		}
+		
+
+		for(int i = 1 ; i < num_levels ; i++) {
+			std::cout<<"/////level "<<i<<"\n";
+			SubDivision::Mesh updated_mesh;
+			if(!division_solver->Run((meshes[i-1]), (updated_mesh))) {
+				break;
+			}
+			meshes.emplace_back(updated_mesh);
+		}
+		num_levels = meshes.size();
+		std::cout<<"max level : "<<num_levels<<"\n";
+
+		for(int i = 0 ; i < num_levels ; i++) {
+            std::vector<float> pData;
+            size_t num_vertex;
+            std::tie(pData, num_vertex) = meshes[i].ConvertToTriangularMesh();
+            std::cout<<i<<" pData->size(): "<<pData.size()<<"\n";
+            CreateMeshPNC(pData.data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
+        }
+
+	}
+
 	/**
 	* @brief Implementation of keyboard clicking callback function
 	*
@@ -431,18 +530,35 @@ namespace GLRendering {
 		if (glfwGetKey(window_, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 			glfwSetWindowShouldClose(window_, true);
 
-		if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS)
+		if(b_initialization_window_) {
+			if (glfwGetKey(window_, GLFW_KEY_Z) == GLFW_PRESS) {
+				used_method = 0;
+				return;
+			}
+
+			if (glfwGetKey(window_, GLFW_KEY_X) == GLFW_PRESS) {
+				used_method = 1;
+				return;
+			}
+
+			if (glfwGetKey(window_, GLFW_KEY_C) == GLFW_PRESS) {
+				used_method = 2;
+				return;
+			}
+		} else {
+			if (glfwGetKey(window_, GLFW_KEY_F) == GLFW_PRESS)
 			b_show_wireframe_ = !b_show_wireframe_;
 
-		if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
-			if(models_.count(view_level_ + 1)) {
-				view_level_ += 1;
+			if (glfwGetKey(window_, GLFW_KEY_W) == GLFW_PRESS) {
+				if(models_.count(view_level_ + 1)) {
+					view_level_ += 1;
+				}
 			}
-		}
 
-		if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
-			if(models_.count(view_level_ - 1)) {
-				view_level_ -= 1;
+			if (glfwGetKey(window_, GLFW_KEY_S) == GLFW_PRESS) {
+				if(models_.count(view_level_ - 1)) {
+					view_level_ -= 1;
+				}
 			}
 		}
 			

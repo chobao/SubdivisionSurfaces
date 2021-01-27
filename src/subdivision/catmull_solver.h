@@ -5,7 +5,7 @@ namespace SubDivision {
 
     class CatmullClarkSolver: public SubDivisionSolver {
     public:
-        bool Run(const Mesh& mesh, Mesh& updated_mesh);
+        bool Run(const Mesh& mesh, Mesh& updated_mesh) override;
 
         void UpdateFacePoints(const std::vector<Eigen::Vector3d>& face_points, 
                               std::vector<index_t>& updated_face_points);

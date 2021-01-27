@@ -25,6 +25,8 @@ namespace SubDivision {
             }
         }
 
+        virtual bool Run(const Mesh& mesh, Mesh& updated_mesh) = 0;
+
 
     protected:
         std::vector<Eigen::Vector3d> point_table_;

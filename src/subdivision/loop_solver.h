@@ -4,7 +4,7 @@
 namespace SubDivision {
     class LoopSolver: public SubDivisionSolver {
     public:
-        bool Run(const Mesh& mesh, Mesh& updated_mesh);
+        bool Run(const Mesh& mesh, Mesh& updated_mesh) override;
 
         bool CheckCheirality(const Mesh& mesh);
 
@@ -17,6 +17,6 @@ namespace SubDivision {
                     const std::vector<index_t>& updated_edge_points,
                     const std::vector<index_t>& updated_vertices,
                     std::vector<std::vector<index_t>>& updated_polygons);
-        const bool verbose = true;
+        const bool verbose = false;
     };
 }

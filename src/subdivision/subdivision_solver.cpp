@@ -36,11 +36,11 @@ namespace SubDivision {
 
         void SubDivisionSolver::MakeUpMesh(std::vector<std::vector<index_t>>& polygons,
                         Mesh& updated_mesh) {
-            // for(auto& polygon: polygons) {
-            //     const Eigen::Vector3d& p0 = point_table_.at(polygon[0]);
-            //     Eigen::Vector3d norm = ((point_table_.at(polygon[1]) - p0).cross(point_table_.at(polygon[2]) - p0)).normalized();
-            //     GeometryUtils::SortConvexPointIndexSetInClockWise(point_table_, norm, polygon);
-            // }
+            for(auto& polygon: polygons) {
+                const Eigen::Vector3d& p0 = point_table_.at(polygon[0]);
+                Eigen::Vector3d norm = ((point_table_.at(polygon[1]) - p0).cross(point_table_.at(polygon[2]) - p0)).normalized();
+                GeometryUtils::SortConvexPointIndexSetInClockWise(point_table_, norm, polygon);
+            }
             updated_mesh.SetUp(point_table_, polygons);
         }   
 

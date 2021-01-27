@@ -6,6 +6,7 @@
 #include "subdivision/catmull_solver.h"
 #include "subdivision/loop_solver.h"
 #include "utils/geometry_utils.h"
+#include "subdivision/doo_solver.h"
 #include <numeric>
 
 
@@ -91,7 +92,8 @@ int solve( const CommonUtils::Config& config) {
 
     std::vector<Eigen::Vector3d> vertices;
     std::vector<std::vector<index_t>> polygons;
-    CommonUtils::LoadObj(config.model_path, vertices, polygons,true);
+    const bool b_split_triangle = false;
+    CommonUtils::LoadObj(config.model_path, vertices, polygons,b_split_triangle);
     std::vector<SubDivision::Mesh> meshes;
     meshes.reserve(num_levels);
     meshes.emplace_back(SubDivision::Mesh());
@@ -102,11 +104,11 @@ int solve( const CommonUtils::Config& config) {
 
     SubDivision::CatmullClarkSolver clark_division_solver;
     SubDivision::LoopSolver loop_division_solver;
-
+    SubDivision::DooSabinSolver doo_division_solver;
 
     for(int i = 1 ; i < num_levels ; i++) {
         SubDivision::Mesh updated_mesh;
-        if(!loop_division_solver.Run((meshes[i-1]), (updated_mesh))) {
+        if(!doo_division_solver.Run((meshes[i-1]), (updated_mesh))) {
             break;
         }
         meshes.emplace_back(updated_mesh);
@@ -185,7 +187,7 @@ void test3dOrdering() {
 int main(){
      CommonUtils::Config config;
     config.view_width = 800, config.view_height = 600;
-    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/teapot.obj";
+    config.model_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/res/cube.obj";
     config.vertex_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_v.glsl";
     config.fragment_shader_path = "/home/baochong/Projects/HomeWork/GeometryModeling/SubdivisionSurface/src/visualization/model_f.glsl";
     solve(config);

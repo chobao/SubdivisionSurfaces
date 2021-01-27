@@ -164,14 +164,16 @@ namespace SubDivision {
                 continue;
             }
             const std::vector<index_t>& points = polygons_[i]->points;
-            const Eigen::Vector3d& norm = polygons_[i]->norm;
 
             const Eigen::Vector3d& p1 = VertexPoint(points[0]);
             for(int j = 1 ,sz = points.size() - 1; j < sz ;j++) {
+                const Eigen::Vector3d& p2 = VertexPoint(points[j]);
+                const Eigen::Vector3d& p3 = VertexPoint(points[j + 1]);
+                Eigen::Vector3d norm = ((p2 - p1).cross(p3 - p1)).normalized();  // exists a nonplane-polygon 
                 //push vertex
                 func(p1, norm);
-                func(VertexPoint(points[j]), norm);
-                func(VertexPoint(points[j + 1]), norm);
+                func(p2, norm);
+                func(p3, norm);
                 num_vertex += 3;
             }
         }

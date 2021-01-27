@@ -109,7 +109,7 @@ int solve( const CommonUtils::Config& config) {
     for(int i = 1 ; i < num_levels ; i++) {
         std::cout<<"/////level "<<i<<"\n";
         SubDivision::Mesh updated_mesh;
-        if(!doo_division_solver.Run((meshes[i-1]), (updated_mesh))) {
+        if(!clark_division_solver.Run((meshes[i-1]), (updated_mesh))) {
             break;
         }
         meshes.emplace_back(updated_mesh);

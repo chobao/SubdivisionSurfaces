@@ -152,12 +152,12 @@ namespace SubDivision {
                 index_t vertex_id;
                 if(Mesh::CommonVertex(mesh.EdgeElement(edge_id1), mesh.EdgeElement(edge_id2), vertex_id)) {
                     //four points may not be on a plane
-                    // updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i], updated_edge_points[edge_id1],
-                    //                                            updated_vertices[vertex_id], updated_edge_points[edge_id2] });
-                      updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i], updated_edge_points[edge_id1],
-                                                               updated_vertices[vertex_id]});
-                      updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i],
+                    updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i], updated_edge_points[edge_id1],
                                                                updated_vertices[vertex_id], updated_edge_points[edge_id2] });
+                    //   updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i], updated_edge_points[edge_id1],
+                    //                                            updated_vertices[vertex_id]});
+                    //   updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i],
+                    //                                            updated_vertices[vertex_id], updated_edge_points[edge_id2] });
                 } else {
                     std::cerr << "neighbour edges are not continous.\n";
                 }

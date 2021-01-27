@@ -99,7 +99,7 @@ int solve( const CommonUtils::Config& config) {
     meshes.emplace_back(SubDivision::Mesh());
     meshes[0].SetUp(vertices, polygons);
     
-    meshes[0].PrintObj();
+    //meshes[0].PrintObj();
     //meshes[0]->PrintPolygon();
 
     SubDivision::CatmullClarkSolver clark_division_solver;

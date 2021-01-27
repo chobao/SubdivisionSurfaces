@@ -25,7 +25,7 @@ namespace SubDivision {
                 const std::vector<std::vector<index_t>>& updated_vertex_polygons,
                 std::vector<std::vector<index_t>>& polygons);
         
-        const bool verbose = true;
+        const bool verbose = false;
         const bool b_solve_boundary = true;
         std::map<index_t,index_t> processed_boundary_vertex_;
     };

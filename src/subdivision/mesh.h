@@ -96,7 +96,7 @@ private:
         std::vector<std::shared_ptr<Vertex>> vertices_;
         std::vector<std::shared_ptr<Edge>> edges_;
         std::vector<std::shared_ptr<Polygon>> polygons_;
-        const bool verbose = true;
+        const bool verbose = false;
 
 
     };

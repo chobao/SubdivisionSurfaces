@@ -115,18 +115,32 @@ namespace SubDivision {
             // sum up the edge point of associated edges and face point for each vertex in polgyon
             for(const auto vertex_id : points) {
                 const auto& asso_edges = asso_edges_per_vertex.at(vertex_id);
-                if(asso_edges.size() != 2) {
-                    std::cerr << "Error: the number of vertex in the polygon does not equals to 2.\n";
-                    continue;
-                }
-                Eigen::Vector3d sum_edge_points = Eigen::Vector3d::Zero();
-                for(const auto& edge_id : asso_edges) {
-                    sum_edge_points += edge_points[edge_id];
-                }
+                const std::shared_ptr<Vertex>& vertex = mesh.VertexElement(vertex_id);
+                index_t updated_vertex_id;
+                //speical care for  boundary vertex
+                if(b_solve_boundary && vertex->associated_polygons.size() != vertex->associated_edges.size()) {
+                    if(processed_boundary_vertex_.count(vertex_id)) {
+                        updated_vertex_id = processed_boundary_vertex_.at(vertex_id);
+                    } else {
+                        updated_vertex_id = CreatePoint(vertex->p);
+                        processed_boundary_vertex_[vertex_id] = updated_vertex_id;
+                    }
+                } else {
+                    if(asso_edges.size() != 2) {
+                        std::cerr << "Error: the number of vertex in the polygon does not equals to 2.\n";
+                        continue;
+                    }
+                    Eigen::Vector3d sum_edge_points = Eigen::Vector3d::Zero();
+                    for(const auto& edge_id : asso_edges) {
+                        sum_edge_points += edge_points[edge_id];
+                    }
 
-                const Eigen::Vector3d old_point = mesh.VertexPoint(vertex_id);
-                Eigen::Vector3d updated_vertices = (sum_edge_points + old_point + face_points[i]) / 4.0;
-                index_t updated_vertex_id = CreatePoint(updated_vertices);
+                    const Eigen::Vector3d old_point = mesh.VertexPoint(vertex_id);
+                    Eigen::Vector3d updated_vertices = (sum_edge_points + old_point + face_points[i]) / 4.0;
+                    updated_vertex_id = CreatePoint(updated_vertices);
+                }
+                
+                
 
                 // link the used primitives with updated vertex
                 updated_polygons[i].emplace_back(updated_vertex_id); //ordered
@@ -173,10 +187,26 @@ namespace SubDivision {
                 }
                 edge_status[edge_id] = true;
                 //place points in order consistent to that of input polygon
-                updated_edge_polygons.emplace_back(std::vector<index_t>{indexed_vertices.at(polygon_id2).at(vertex_id1),
-                                                                        indexed_vertices.at(polygon_id2).at(vertex_id2),
-                                                                        indexed_vertices.at(polygon_id).at(vertex_id2),
-                                                                        indexed_vertices.at(polygon_id).at(vertex_id1)});
+                index_t id21 = indexed_vertices.at(polygon_id2).at(vertex_id1);
+                index_t id22 = indexed_vertices.at(polygon_id2).at(vertex_id2);
+                index_t id12 = indexed_vertices.at(polygon_id).at(vertex_id2);
+                index_t id11 = indexed_vertices.at(polygon_id).at(vertex_id1);
+                if(id22 == id12) { // caused by processing boundary case i.e. vertex 2 is boundary point
+                    updated_edge_polygons.emplace_back(std::vector<index_t>{
+                                                                        id21,
+                                                                        id12,
+                                                                        id11});
+                } else if(id21 == id11) { // caused by processing boundary point
+                    updated_edge_polygons.emplace_back(std::vector<index_t>{id21,
+                                                                        id22,
+                                                                        id12});
+                } else {
+                     updated_edge_polygons.emplace_back(std::vector<index_t>{id21,
+                                                                        id22,
+                                                                        id12,
+                                                                        id11});
+                }
+               
 
             }
         }
@@ -214,6 +244,10 @@ namespace SubDivision {
         const auto& vertices = mesh.Vertices();
         for(int vertex_id = 0 ; vertex_id < vertices.size() ; vertex_id++) {
             const std::shared_ptr<Vertex>& vertex = vertices[vertex_id];
+            //speical care for  boundary vertex
+            if(b_solve_boundary && vertex->associated_polygons.size() != vertex->associated_edges.size()) {
+                continue;
+            }
             const auto& asso_polygon = vertex->associated_polygons;
             // choose the first associated polyon of vertex as beginning
             index_t polygon_id = asso_polygon[0]; 

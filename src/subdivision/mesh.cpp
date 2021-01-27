@@ -42,7 +42,9 @@ namespace SubDivision {
                 if(edge_pair.first > edge_pair.second) {
                     std::swap(edge_pair.first, edge_pair.second);
                 }
-
+                if(edge_pair.first >= edge_pair.second) {
+                    std::cout<<"edge_pair  "<<edge_pair.first<<", "<<edge_pair.second<<"\n";
+                }
                 assert(edge_pair.first < edge_pair.second);
 
                 //create edge if necessary

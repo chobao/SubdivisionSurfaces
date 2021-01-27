@@ -18,6 +18,11 @@ message(STATUS "OpenGL libraries :${OPENGL_LIBRARIES}")
 endif()
 
 find_package(glfw3 REQUIRED)
+find_package(GLUT REQUIRED)
+if(GLUT_FOUND)
+message(STATUS "GLUT libraries :${GLUT_LIBRARIES}")
+endif()
+
 find_package(GLEW REQUIRED)
 if(GLEW_FOUND)
 message(STATUS "GLEW libraries :${GLEW_LIBRARIES}")
@@ -25,7 +30,7 @@ endif()
 
 
 set(SubdivisionSurface_EXTERNA_INCLUDEDIRS ${EIGEN3_INCLUDE_DIRS})
-set(SubdivisionSurface_EXTERNAL_LIBRARIES ${OPENGL_LIBRARIES} glfw ${GLEW_LIBRARIES})
+set(SubdivisionSurface_EXTERNAL_LIBRARIES ${OPENGL_LIBRARIES} glfw ${GLEW_LIBRARIES} ${GLUT_LIBRARIES})
 include_directories(${SubdivisionSurface_EXTERNA_INCLUDEDIRS})
 include_directories(src)
 add_subdirectory(src)

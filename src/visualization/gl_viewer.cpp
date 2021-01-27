@@ -1,5 +1,9 @@
 #include "gl_viewer.h"
-
+#ifdef __APPLE__
+#include <gl/freeglut.h>
+#else
+#include <GL/freeglut.h>
+#endif
 #include <glm/glm.hpp>
 //#include <glut/glut.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -84,6 +88,11 @@ namespace GLRendering {
 			std::cerr << "Failed to initialize shader " << std::endl;
 			return false;
 		}
+
+		//Initialize glut for rendering text
+		int tmp_val = 1;
+    	char *tmp_char = nullptr;
+    	glutInit(&tmp_val, &tmp_char);
 
 		glEnable(GL_DEPTH_TEST);
 		return true;
@@ -171,11 +180,16 @@ namespace GLRendering {
 		if(view_level_ == -1) {
 			return;
 		}
+    	
 		if(b_show_wireframe_) {
 			RenderFixed(models_.at(view_level_));
 		} else {
 			Render(models_.at(view_level_));
 		}
+		PutText(-0.9f, 0.85f, "Key:");
+    	PutText(-0.9f, 0.78f, "W: next level of subdivision");
+    	PutText(-0.9f, 0.71f, "D: previous level of subdivision");
+    	PutText(-0.9f, 0.64f, "F: switch between wireframe and mesh");
 	}
 
 	void Viewer::RenderFixed(const ModelAttrib& modelItem) {
@@ -264,6 +278,31 @@ namespace GLRendering {
 		//}
 		
 		shader_.Unbind();
+	}
+
+
+	//reference code:
+	void Viewer::PutText(float x, float y, std::string str) {
+		glMatrixMode( GL_PROJECTION ) ;
+		glPushMatrix() ; // save
+		glLoadIdentity();// and clear
+		glMatrixMode( GL_MODELVIEW ) ;
+		glPushMatrix() ;
+		glLoadIdentity() ;
+
+		//glDisable(GL_LIGHTING);
+		glDisable(GL_DEPTH_TEST);
+		glColor3d(1.0, 1.0, 1.0);
+		glRasterPos2d(x, y);
+		for (int n = 0; n < str.size(); ++n) {
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, str[n]);
+		}
+		//glEnable(GL_LIGHTING);
+		glEnable(GL_DEPTH_TEST);
+		glMatrixMode( GL_PROJECTION ) ;
+		glPopMatrix() ; // revert back to the matrix I had before.
+		glMatrixMode( GL_MODELVIEW ) ;
+		glPopMatrix() ;
 	}
 	
 

@@ -66,7 +66,7 @@ namespace GLRendering {
 		ModelAttrib* CreateMeshPNC(const float* pData, const int stride, const int num_vertex, const glm::vec3& modelColor,
 										const glm::mat4& modelMatrix);
 		
-		
+		void PutText(float x, float y, std::string str);
 
 
 
@@ -96,6 +96,9 @@ namespace GLRendering {
 		GLFWwindow* window_;
 		const bool verbose = false;
 		int view_level_;
+
+		//initialization window
+
 		
 	};
 

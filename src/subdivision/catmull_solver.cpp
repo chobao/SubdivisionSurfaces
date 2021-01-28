@@ -125,7 +125,7 @@ namespace SubDivision {
                 face_pt = face_pt / num_asso_polygons;
 
                 if(num_asso_polygons < 3) {
-                    std::cerr << "Error: There is line which may caused by level of subdivision is too high.\n";
+                    //std::cerr << "Error: There is line which may caused by level of subdivision is too high.\n";
                     return false;
                 }
                 
@@ -159,7 +159,7 @@ namespace SubDivision {
                     //   updated_polygons.emplace_back(std::vector<index_t>{updated_face_points[i],
                     //                                            updated_vertices[vertex_id], updated_edge_points[edge_id2] });
                 } else {
-                    std::cerr << "neighbour edges are not continous.\n";
+                    //std::cerr << "neighbour edges are not continous.\n";
                 }
             }
         }

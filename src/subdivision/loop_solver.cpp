@@ -15,7 +15,7 @@ namespace SubDivision {
     bool LoopSolver::Run(const Mesh& mesh, Mesh& updated_mesh) {
         
         if(!CheckCheirality(mesh)) {
-            std::cerr << "Error: input mesh contains non-triangles.\n";
+            //std::cerr << "Error: input mesh contains non-triangles.\n";
             return false;
         }
         
@@ -109,7 +109,7 @@ namespace SubDivision {
                 if(id == i) {  // `i` is the id of current vertex
                     id = edge->id2;
                     if(id == i) {
-                        std::cerr <<"Warning: a point is included in edges.\n";
+                        //std::cerr <<"Warning: a point is included in edges.\n";
                         continue;
                     }
                 }
@@ -153,7 +153,7 @@ namespace SubDivision {
                     updated_polygons.emplace_back(std::vector<index_t>{updated_edge_points[edge_id1], updated_vertices[vertex_id],
                                                                         updated_edge_points[edge_id2]});
                 } else {
-                    std::cerr << "neighbour edges are not continous.\n";
+                    //std::cerr << "neighbour edges are not continous.\n";
                 }
             }
             assert(edges.size() == 3);

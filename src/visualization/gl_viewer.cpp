@@ -78,7 +78,7 @@ namespace GLRendering {
 		window_ = glfwCreateWindow(screen_width_, screen_height_, "MyOpenGL", NULL, NULL);
 		if (window_ == NULL)
 		{
-			std::cerr << "Failed to create GLFW window_" << std::endl;
+			//std::cerr << "Failed to create GLFW window_" << std::endl;
 			glfwTerminate();
 			return false;
 		}
@@ -98,12 +98,12 @@ namespace GLRendering {
 
 		if (glewInit() != GLEW_OK)
 		{
-			std::cerr << "Failed to initialize GLEW" << std::endl;
+			//std::cerr << "Failed to initialize GLEW" << std::endl;
 			return false;
 		}
 
     	if(!InitializeShader(shader_, vertex_shader_path_.c_str(), fragment_shader_path_.c_str(), "Vs", "Fs")) {
-			std::cerr << "Failed to initialize shader " << std::endl;
+			//std::cerr << "Failed to initialize shader " << std::endl;
 			return false;
 		}
 
@@ -125,7 +125,7 @@ namespace GLRendering {
 	void Viewer::Run() {
 
 		if (!b_setup_) {
-			std::cerr << "Error: Please first invoke SetUp() function.\n";
+			//std::cerr << "Error: Please first invoke SetUp() function.\n";
 			return;
 		}
 

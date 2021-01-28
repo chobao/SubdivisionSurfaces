@@ -15,7 +15,7 @@ struct Config{
     //     fs.open(config_path, cv::FileStorage::READ);
     //     if (!fs.isOpened())
     //     {
-    //         std::cerr << "Failed to open " << config_path << std::endl;
+    //         //std::cerr << "Failed to open " << config_path << std::endl;
     //         return false;
     //     }
 

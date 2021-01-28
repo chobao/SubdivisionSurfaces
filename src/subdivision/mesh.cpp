@@ -43,7 +43,7 @@ namespace SubDivision {
                     std::swap(edge_pair.first, edge_pair.second);
                 }
                 if(verbose && edge_pair.first >= edge_pair.second) {
-                    std::cerr<<"edge_pair  "<<edge_pair.first<<", "<<edge_pair.second<<"\n";
+                    //std::cerr<<"edge_pair  "<<edge_pair.first<<", "<<edge_pair.second<<"\n";
                 }
                 assert(edge_pair.first < edge_pair.second);
 

@@ -13,7 +13,7 @@ bool Model::LoadObj(const std::string& file_path) {
 
     std::ifstream file(file_path);
     if (!file.is_open()) {
-        std::cerr << "fail to open file " + file_path << std::endl;
+        //std::cerr << "fail to open file " + file_path << std::endl;
         return false;
     }
     std::string type;

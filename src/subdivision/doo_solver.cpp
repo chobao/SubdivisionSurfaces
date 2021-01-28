@@ -127,7 +127,7 @@ namespace SubDivision {
                     }
                 } else {
                     if(asso_edges.size() != 2) {
-                        std::cerr << "Error: the number of vertex in the polygon does not equals to 2.\n";
+                        //std::cerr << "Error: the number of vertex in the polygon does not equals to 2.\n";
                         continue;
                     }
                     Eigen::Vector3d sum_edge_points = Eigen::Vector3d::Zero();
@@ -166,7 +166,7 @@ namespace SubDivision {
                 //seach corresponding edge id
                 index_t edge_id;
                 if(!mesh.FindEdge(polygon_id, i, vertex_id1, vertex_id2, edge_id)) {
-                    std::cerr<<"Error: None corresponding edge between ("<<vertex_id1<<" -> "<<vertex_id2<<" is found.\n";
+                    //std::cerr<<"Error: None corresponding edge between ("<<vertex_id1<<" -> "<<vertex_id2<<" is found.\n";
                     break;
                 }
                 if(edge_status[edge_id]) {
@@ -182,7 +182,7 @@ namespace SubDivision {
                 //seach neighbour polygon of current polygon touching current edge
                 index_t polygon_id2 = polygon_id;
                 if(!edge->FindNeighbourPolygon(polygon_id, polygon_id2)) {
-                    std::cerr <<"Error: none polygon near current polygon touches edge "<<edge_id<<" in `UpdatedEdgePolygon` \n";
+                    //std::cerr <<"Error: none polygon near current polygon touches edge "<<edge_id<<" in `UpdatedEdgePolygon` \n";
                     break;
                 }
                 edge_status[edge_id] = true;
@@ -263,7 +263,7 @@ namespace SubDivision {
             for(int j = 0 ; j < asso_polygon.size() ; j++) {
                 
                 if(vis_polygon.count(polygon_id)) {
-                    std::cerr<<"Error: a unexpected loop in vertex associated_polygons\n";
+                    //std::cerr<<"Error: a unexpected loop in vertex associated_polygons\n";
                     b_succ = false;
                     break;
                 }
@@ -277,7 +277,7 @@ namespace SubDivision {
                 //search the index of vertex  in point list of associated polygon
                 auto it = std::find (points.begin(), points.end(), vertex_id);
                 if (it == points.end()) {
-                    std::cerr<<"Error: can not find vertex in associated polygon\n";
+                    //std::cerr<<"Error: can not find vertex in associated polygon\n";
                     b_succ = false;
                     break;
                 }
@@ -292,25 +292,25 @@ namespace SubDivision {
                 if(ordered_polygons.size() == 1) {
                     //assume that first edge starting from vertex in the polygon, the second edge should end at the vertex in the polygon
                     if(!mesh.FindEdge(polygon_id, prev_index, points[prev_index], points[index], edge_id)) {
-                        std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
+                        //std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
                         break;
                     }
                     last_edge_id = edge_id;
                 }
                 else {
                     if(!mesh.FindEdge(polygon_id, prev_index, points[prev_index], points[index], edge_id)) {
-                        std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
+                        //std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
                         break;
                     }
                     //select the edge difference from last edge in the polygon
                     if(edge_id == last_edge_id) {
                         int nxt_index = (index + 1)% num_points;
                         if(!mesh.FindEdge(polygon_id, index, points[index], points[nxt_index], edge_id)) {
-                            std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
+                            //std::cerr<<"Error: None corresponding edge between ("<<points[prev_index]<<" -> "<<points[index]<<" is found.\n";
                             break;
                         }
                         if(edge_id == last_edge_id) {
-                            std::cerr<<"Error: No more edges are difference withlast edge ("<<last_edge_id<<" .\n";
+                            //std::cerr<<"Error: No more edges are difference withlast edge ("<<last_edge_id<<" .\n";
                             break;
                         }
                     }
@@ -321,13 +321,13 @@ namespace SubDivision {
                 //seach neighbour polygon of current polygon both touching current edge
                 if(edge->associated_polygons.size() < 2) {  //solve for boundary where should stop
                     if(j + 1 != asso_polygon.size()) {
-                        std::cout<<"Error: searching in associated polygons is stopped by boundary unexpectly.\n";
+                        //std::cerr<<"Error: searching in associated polygons is stopped by boundary unexpectly.\n";
                     }
                     break;
                 }
                 index_t polygon_id2;
                 if(!edge->FindNeighbourPolygon(polygon_id, polygon_id2)) {
-                    std::cerr <<"Error: none polygon near current polygon touches edge "<<edge_id<<"in `UpdateVertexPolygon`\n";
+                    //std::cerr <<"Error: none polygon near current polygon touches edge "<<edge_id<<"in `UpdateVertexPolygon`\n";
                     break;
                 }
                 polygon_id = polygon_id2;

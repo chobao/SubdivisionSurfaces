@@ -219,4 +219,43 @@ namespace SubDivision {
 
         }
     }
+
+    void Mesh::ScaleModel(const float max_scale) {
+        
+        // collect the center and scale of model
+        Eigen::Vector3d model_center = Eigen::Vector3d::Zero();
+        double max_x = -GeometryUtils::MILLION, max_y = - GeometryUtils::MILLION;
+        double min_x = GeometryUtils::MILLION, min_y = GeometryUtils::MILLION;
+        size_t num_vertexes = 0;
+        
+        for(const auto& vertex : vertices_) {
+            const auto& point = vertex->p;
+            model_center += point;
+
+            max_x = max_x < point.x() ? point.x() : max_x;
+            min_x = min_x > point.x() ? point.x() : min_x;
+            max_y = max_y < point.y() ? point.y() : max_y;
+            min_y = min_y > point.y() ? point.y() : min_y;
+
+            num_vertexes++;
+        }
+        
+        model_center /= num_vertexes;
+        double max_radius = 0.0;
+        for(const auto& vertex : vertices_) {
+            double radius = (vertex->p - model_center).norm();
+            max_radius = max_radius < radius ? radius : max_radius;
+        }
+
+        // Align model to screen frame
+        Eigen::Vector3d translation_3d(0.0, 0.0, 0.0);
+
+        double scale = max_scale / max_radius;
+
+        for(auto& vertex : vertices_) {
+            auto& point = vertex->p;
+            point= (point - model_center) * scale + translation_3d;  //scale
+        }
+
+    }
 }

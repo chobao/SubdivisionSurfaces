@@ -480,6 +480,7 @@ namespace GLRendering {
 		meshes.reserve(num_levels);
 		meshes.emplace_back(SubDivision::Mesh());
 		meshes[0].SetUp(vertices, polygons);
+		meshes[0].ScaleModel(3.0);
 		
 		//meshes[0].PrintObj();
 		//meshes[0]->PrintPolygon();

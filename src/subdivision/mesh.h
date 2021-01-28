@@ -88,6 +88,8 @@ public:
             return false;
         }
 
+            void ScaleModel(const float max_scale);
+
        
 
 private:

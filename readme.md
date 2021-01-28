@@ -62,8 +62,8 @@ struct Vertex{
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可视化部分使用OpenGL管道shader管道渲染，场景是一个简单环境光组成的场景，用户交互使用turn tale的交互模型。
 ### 2.4 引用部分
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;引用高通OpenGL渲染封装类`gl_shader.h/.cpp`, `gl_geometry.h/.cpp`,以及文字渲染管线`Viewer::PutText()`
-### 3.使用说明
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;运行程序存放在`build/src/mainSubdivisionSurface`，运行程序需要用户输入obj模型地址，顶点着色器地址，片段着色器地址。`Please enter mainSubdivisionSurface [obj_path] [vertex_shader_path] [fragment_shader_path]`。
+## 3.使用说明
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;运行程序存放在`build/src/mainSubdivisionSurface`，运行程序需要用户输入obj模型地址，顶点着色器地址，片段着色器地址。执行以下命令`mainSubdivisionSurface [obj_path] [vertex_shader_path] [fragment_shader_path]`运行程序。
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`run.sh`是用来自动启动程序的脚本,用户运行`run.sh [obj_path]`即可启动，取消脚本中`array=(`ls ${res_dir}/*.obj`)`中语句的注释，即可逐个可视化res/内的内容。
 
@@ -71,7 +71,7 @@ struct Vertex{
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择细分方法后，用户可以看到初始模型渲染结构（0层），使用`W`进入下一层细分结果，`S`进入上一层细分结果，`F`在线框图和面片着色模式下切换，`esc`结束程序。
 
-### 4.使用说明
+## 4.运行结果
 运行结果存放在results文件夹中，其中`gm_subdivision.mp4`是程序运行的demo视频。以下是程序运行的截图。
 
 原始模型：

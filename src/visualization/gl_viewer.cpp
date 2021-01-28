@@ -208,9 +208,14 @@ namespace GLRendering {
 				method_name = "Doo-Sabin subdivision";
 
 			}
-			Subdivision();
-			ResetContollingVariables();
-			b_initialization_window_ = false;
+			if(Subdivision()) {
+				used_method = -1;
+				ResetContollingVariables();
+				b_initialization_window_ = false;
+			} else {
+				
+			}
+			
 		}
 			
 	}
@@ -468,7 +473,7 @@ namespace GLRendering {
     	return new_model;
 	}
 
-	void Viewer::Subdivision() {
+	bool Viewer::Subdivision() {
 
 		size_t num_levels = config_.maximum_level;
 		std::vector<Eigen::Vector3d> vertices;
@@ -477,7 +482,9 @@ namespace GLRendering {
 		if(used_method == 0) {
 			b_split_triangle = true; // split input mesh into triangles for loop subdivison 
 		}
-		CommonUtils::LoadObj(config_.model_path, vertices, polygons,b_split_triangle);
+		if(!CommonUtils::LoadObj(config_.model_path, vertices, polygons,b_split_triangle)) {
+			return false;
+		}
 		std::vector<SubDivision::Mesh> meshes;
 		meshes.reserve(num_levels);
 		meshes.emplace_back(SubDivision::Mesh());
@@ -520,6 +527,7 @@ namespace GLRendering {
             std::cout<<i<<" pData->size(): "<<pData.size()<<"\n";
             CreateMeshPNC(pData.data(), 9, num_vertex, glm::vec3(0.4, 0.4, 0.0) ,glm::mat4(1.0));
         }
+		return true;
 
 	}
 

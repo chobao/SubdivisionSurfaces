@@ -70,7 +70,7 @@ namespace GLRendering {
 		
 
 
-		void Subdivision(); //indenpent to rendering pipeline
+		bool Subdivision(); //indenpent to rendering pipeline
 
 
 

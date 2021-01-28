@@ -20,7 +20,7 @@ struct Vertex{
     
     struct Edge {
         index_t id1;  //顶点1在顶点表的 id
-	    index_t id2; //顶点1在顶点表的 id
+	    index_t id2; //顶点2在顶点表的 id
         std::vector<index_t> associated_polygons;//边相邻的多边形id
     };
 

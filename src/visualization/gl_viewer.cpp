@@ -235,6 +235,8 @@ namespace GLRendering {
     	PutText(-0.9f, 0.78f, "W: next level of subdivision");
     	PutText(-0.9f, 0.71f, "D: previous level of subdivision");
     	PutText(-0.9f, 0.64f, "F: switch between wireframe and mesh");
+		PutText(-0.9f, 0.57f, method_name);
+
 	}
 
 	void Viewer::RenderFixed(const ModelAttrib& modelItem) {
